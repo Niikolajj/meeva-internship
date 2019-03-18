@@ -1,0 +1,182 @@
+{% extends "base.html.twig" %}
+{% block body %}
+    <div class="row justify-content-center">
+        <div class="col-11">
+            <div class="card bg-dark editTable">
+                <div class="titlebar align-content-center">
+                    <div class="mx-auto input-group mt-3 col-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="basic-addon1">Woche</span>
+                        </div>
+                        <input onChange="activeWeek(this)" type="number" min="1" class="form-control" placeholder="" aria-label="Woche" name="woche" id="wochenNr" value="{{ woche["wochenNummer"] }}">
+                        <div class="input-group-append">
+                            <button class="btn btn-primary" onClick="loadWeek(event)">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="align-self-end">
+                    <button class="py-0 mr-4 mb-2 btn btn-primary" onClick="printTable(event)">
+                        <i class="fas fa-print"></i>
+                    </button>
+                </div>
+                <table class="table-responsive">
+                    <thead>
+                    <tr>
+                        <th class="col-2" onclick="sortTable(0, this)" scope="col"> Tag</th>
+                        <th class="col-1" onclick="sortTable(1, this)" scope="col"> Lieferant</th>
+                        <th class="" scope="col">Gericht</th>
+                        <th class="col-2" scope="col">Zusagen</th>
+                        <th class="col-1 text-center" scope="col" >
+                            <button class="py-0 btn btn-primary" onClick="addLine(this)"><i class="fas fa-plus"></i></button>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        {% for tag in woche['bestellTage'] %}
+                            <tr class="align-items-center" data-id="{{ tag['bestellung'].id }}" data-changed="false">
+                                <td>
+                                    <select class="form-control" id="tagInput" name="tag" onChange="setChanged(this)">
+                                        <option value="{{ tag['bestellung'].tag }}">{{ tag['bestellung'].tagName }}</option>
+                                        <option value="1">Montag</option>
+                                        <option value="2">Dienstag</option>
+                                        <option value="3">Mittwoch</option>
+                                        <option value="4">Donnerstag</option>
+                                        <option value="5">Freitag</option>
+                                        <option value="6">Samstag</option>
+                                        <option value="7">Sonntag</option>
+                                    </select>
+                                </td>
+                                <td> <input class="form-control" type="text" name="lieferant" value="{{ tag['bestellung'].lieferant }}" oninput="setChanged(this)"/></td>
+                                <td> <input class="form-control" type="text" name="gericht" value="{{ tag['bestellung'].gericht }}" oninput="setChanged(this)"/></td>
+                                <td>
+
+                                    <select class="selectpicker" name="zusagen" multiple data-selected-text-format="count>0" onChange="setChanged(this)">
+
+                                        {% for user in users %}
+
+                                        <option value="{{ user.id }}" {{ (user in tag['zusagenListe'])? "selected": "" }}>{{ user.vorname }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td class="text-center"> <button class="py-0 btn btn-primary btn-order" onClick="processOrder(this)" data-function="delete"><i class="far fa-trash-alt"></i></button></td>
+                            </tr>
+                        {% endfor %}
+                        <tr class="align-items-center" data-id="" data-changed="false">
+                            <td>
+                                <select class="form-control" id="tagInput" name="tag" onChange="setChanged(this)">
+                                    <option value="1">Montag</option>
+                                    <option value="2">Dienstag</option>
+                                    <option value="3">Mittwoch</option>
+                                    <option value="4">Donnerstag</option>
+                                    <option value="5">Freitag</option>
+                                    <option value="6">Samstag</option>
+                                    <option value="7">Sonntag</option>
+                                </select>
+                            </td>
+                            <td> <input class="form-control" type="text" name="lieferant" value="" oninput="setChanged(this)"/></td>
+                            <td> <input class="form-control" type="text" name="gericht" value="" oninput="setChanged(this)"/></td>
+                            <td>
+                                <select class="selectpicker" name="zusagen" multiple data-selected-text-format="count>0" onChange="setChanged(this)">
+                                    {% for user in users %}
+                                        <option value="{{ user.id }}">{{ user.vorname }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td class="text-center"> <button class="py-0 btn btn-outline-primary btn-order" onClick="processOrder(this)" data-function="add"><i class="fas fa-plus"></i></button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{%  endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        $('select').selectpicker();
+        function processOrder(button)
+        {
+            var data={};
+            var tr = $(button.closest("tr"));
+            console.log($('#wochenNr'));
+            data["woche"]=$('#wochenNr').val();
+            data["changed"]=tr.data('changed');
+            data["id"]=tr.data('id');
+            tr.find('input,select,textarea').each(function(){
+                data[$(this).attr('name')]=$(this).val();
+            });
+            var order = $(button).data('function');
+            console.log(data);
+            $.ajax({
+                url: "/admin/"+order,
+                type:'POST',
+                data: data,
+                success: function(data) {
+                    data = JSON.parse(data);
+                    const exit_code = data['exit_code'];
+                    console.log(exit_code);
+                    console.log(data['dump']);
+                    const button = tr.find(".btn-order");
+                    const i = button.find("i");
+                    console.log(data)
+                    //button.prop('title',data['zusagen'].join(", "));
+
+                    if(exit_code==="added")
+                    {
+                        button.addClass("btn-primary");
+                        button.removeClass("btn-outline-primary");
+                        button.attr('data-function', 'delete');
+                        i.removeClass("fa-plus");
+                        i.addClass("fa-trash-alt");
+                    }
+                    else if(exit_code==="removed")
+                    {
+                        button.removeClass("btn-primary");
+                        button.addClass("btn-outline-primary");
+                        button.attr('data-function', 'add');
+                        i.addClass("fa-trash-alt");
+                        i.removeClass("fa-plus");
+                    }
+                    else if(exit_code==="updated")
+                    {
+                        button.attr('data-function', 'delete');
+                        i.addClass("fa-trash-alt");
+                        i.removeClass("fa-save");
+                    }
+                    else
+                    {
+                        //alert(exit_code);
+                    }
+                }
+            })
+        }
+        function setChanged(obj)
+        {
+            tr = $(obj).closest("tr");
+            if(tr.data('id')!="")
+            {
+                tr.attr('data-changed', 'true');
+                const button = tr.find(".btn-order");
+                button.attr('data-function', 'update');
+                console.log(button);
+                const i = button.find("i");
+                console.log(i);
+                i.removeClass("fa-trash-alt");
+                i.addClass("fa-save");
+            }
+            else
+            {
+                console.log("");
+            }
+        }
+        function loadWeek(event)
+        {
+            const woche = document.getElementById("wochenNr").value;
+            window.location.href="/admin/"+ woche;
+        }
+    </script>
+
+
+{% endblock %}

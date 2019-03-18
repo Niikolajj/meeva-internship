@@ -1,0 +1,50 @@
+$theme-colors: (
+        "primary":  #BA1F2E,
+        "secondary": #FFFFFF,
+        "dark": #2C2F33
+);
+$body-bg: #000;
+$body-color: #FFF;
+
+
+@import "../../node_modules/bootstrap/scss/bootstrap";
+
+.btn-outline-primary, .btn-outline-secondary
+{
+  font-weight: 700;
+  border-width: 2.5px;
+}
+
+.container
+{
+  margin-top: 3rem;
+}
+.title h1
+{
+  margin-top:120px;
+  font-size:6.3rem;
+}
+.title h1, .title h2, small
+{
+  font-weight: 700;
+}
+.title
+{
+  margin-bottom:2rem;
+}
+table
+{
+  padding-bottom:8rem; /* Funktioniert nicht mal */
+}
+#admincp
+{
+  margin-right:0.69rem;
+}
+.table td
+{
+  vertical-align: middle;
+}
+.bootstrap-select button .bs-placeholder
+{
+  padding: 1rem;
+}

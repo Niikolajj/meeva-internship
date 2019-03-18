@@ -1,0 +1,152 @@
+.profpic {
+  max-width: 100%;
+  width: auto;
+  height: auto;
+}
+
+.selfpromo {
+  width: 0.4rem;
+  height: 0.4rem;
+  position: fixed;
+  left: 0.5rem;
+  bottom: 0.5rem;
+}
+
+.flashing {
+  position: relative;
+  width: 0.4rem;
+  height: 0.4rem;
+  background-color: red;
+  animation-name: flashing;
+  animation-duration: 6.9s;
+  animation-iteration-count: infinite;
+}
+.dropdown {
+  height: 100%;
+  width: 100%;
+}
+
+@keyframes flashing {
+  0% {
+    background-color: #f45b69;
+  }
+  5% {
+    background-color: #f45b69;
+  }
+  6% {
+    background-color: #99e1d9;
+  }
+  10% {
+    background-color: #99e1d9;
+  }
+  11% {
+    background-color: #4c5b61;
+  }
+  15% {
+    background-color: #4c5b61;
+  }
+  16% {
+    background-color: #e9d985;
+  }
+  20% {
+    background-color: #e9d985;
+  }
+  21% {
+    background-color: #9b6a6c;
+  }
+  25% {
+    background-color: #9b6a6c;
+  }
+  26% {
+    background-color: #6fd08c;
+  }
+  30% {
+    background-color: #6fd08c;
+  }
+  31% {
+    background-color: #090446;
+  }
+  35% {
+    background-color: #090446;
+  }
+  36% {
+    background-color: #97ead2;
+  }
+  40% {
+    background-color: #97ead2;
+  }
+  41% {
+    background-color: #f72c25;
+  }
+  45% {
+    background-color: #f72c25;
+  }
+  46% {
+    background-color: #735cdd;
+  }
+  50% {
+    background-color: #735cdd;
+  }
+  51% {
+    background-color: #65b891;
+  }
+  55% {
+    background-color: #65b891;
+  }
+  56% {
+    background-color: #f7f0f5;
+  }
+  60% {
+    background-color: #f7f0f5;
+  }
+  61% {
+    background-color: #82ff9e;
+  }
+  65% {
+    background-color: #82ff9e;
+  }
+  66% {
+    background-color: #414073;
+  }
+  70% {
+    background-color: #414073;
+  }
+  71% {
+    background-color: #f79ad3;
+  }
+  75% {
+    background-color: #f79ad3;
+  }
+  76% {
+    background-color: #afafdc;
+  }
+  80% {
+    background-color: #afafdc;
+  }
+  81% {
+    background-color: #abff4f;
+  }
+  85% {
+    background-color: #abff4f;
+  }
+  86% {
+    background-color: #f21b3f;
+  }
+  90% {
+    background-color: #f21b3f;
+  }
+  91% {
+    background-color: #dec3be;
+  }
+  95% {
+    background-color: #dec3be;
+  }
+  96% {
+    background-color: #f19a3e;
+  }
+  100% {
+    background-color: #f19a3e;
+  }
+}
+
+/*# sourceMappingURL=self.css.map */

@@ -1,0 +1,62 @@
+{# templates/meeva.base.html.twig #}
+{% block nav %}
+    <div class="row justify-content-between nav">
+        <div class="col-2">
+            <a href="../"> <img src="/media/logo.png"/> </a>
+        </div>
+        <div>
+            <i>- beta -</i>
+        </div>
+        <div class="text-right" id="navbarText">
+            <div class="input-group mb-3">
+                <div class="dropdown show">
+                    {#
+                    {% if app.user == null %}
+                        <a class="btn btn-outline-secondary" href="{{ path('app_login') }}" type="button">Log-In </a>
+                    {% else %}
+                    <a class="btn btn-outline-secondary" href="{{ path('app_login') }}" type="button"> {{ app.user.vorname }} {{  app.user.nachname }} </a>
+                    {% endif %}
+                    #}
+                    <button class="btn btn-outline-secondary" type="button" id="dropdownMenu3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {% if app.user != null %}
+                        {{ app.user.vorname }} {{ app.user.nachname }}
+                    {% else %}
+                        Log-in
+                    {% endif %}
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        {% if app.user != null %}
+                            <a class="dropdown-item" href="/food">Bestellungen</a>
+                            {% if "ROLE_ADMIN" in app.user.roles %}
+                                <a class="dropdown-item" href="/admin">Admin Center</a>
+                            {% endif %}
+                            <form class="text-center mt-2" id="logoutForm" action="request/logout.php">
+                                <button class="btn btn-outline-primary" type="submit" name="logOut" value=" (N/A) "/>Log Out</button>
+                            </form>
+                        {% else %}
+                            <div class="text-center">Mattermost Log-in</div>
+                                <form id="loginForm" class="px-4 py-3" action="/" method="POST">
+                                    <div class="input-group mb-3">
+                                        <input type="email" class="form-control placeholder-shown" id="inputEmail" placeholder="Name" aria-label="Username" aria-describedby="basic-addon1" name="email" required autofocus>
+                                        {#<div class="input-group-append">
+                                            <span class="input-group-text" id="basic-addon2">@meeva.de</span>
+                                        </div>#}
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="exampleDropdownFormPassword1">Password</label>
+                                        <input type="password" id="inputPassword" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon3" name="password" required>
+                                    </div>
+                                    <input type="hidden" name="_csrf_token"
+                                           value="{{ csrf_token('authenticate') }}"
+                                    >
+                                    <button type="submit" class="btn btn-primary">Sign in</button>
+                                </form>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="http://www.meeva.de">New around here? Get to know Meeva</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

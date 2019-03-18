@@ -1,0 +1,51 @@
+@media print {
+  body, page {
+    margin: 0;
+    box-shadow: 0;
+  }
+}
+@page {
+  background-color: #FFFFFF;
+  size: A4;
+  margin: 0;
+  /* change the margins as you want them to be. */
+}
+body {
+  font-size: 1rem;
+  background: #cccccc;
+}
+
+page {
+  color: black;
+  background: white;
+  display: block;
+  margin: 0 auto;
+  margin-bottom: 0.5cm;
+  box-shadow: 0 0 0.5cm rgba(0, 0, 0, 0.5);
+}
+
+page[size=A4] {
+  width: 21cm;
+  height: 29.7cm;
+}
+
+img {
+  display: block;
+  max-height: 5rem;
+  max-width: 5rem;
+  height: auto;
+  width: auto;
+  -webkit-filter: grayscale(100%);
+  /* Safari 6.0 - 9.0 */
+  filter: grayscale(100%);
+}
+
+ul.namelist li {
+  display: inline;
+}
+
+#print {
+  height: 94.5%;
+}
+
+/*# sourceMappingURL=print.css.map */

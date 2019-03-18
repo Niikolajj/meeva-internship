@@ -1,0 +1,17 @@
+{# templates/index.base.html.twig #}
+{% extends'base.html.twig' %}
+
+{% block title %}
+    MEEVA
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block body %}
+    <div class="row title">
+        <h1>Ich entwickel' die L&ouml;sung f&uuml;r eure digitale Essensbestellung.*</h1>
+        <h2> <small class="text-muted">*Ich versuch's zumindest.</small> </h2>
+    </div>
+{% endblock %}

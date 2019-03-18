@@ -1,0 +1,159 @@
+{% extends "base.html.twig" %}
+{%  block body %}
+    <div class="row justify-content-center" id="tableholder">
+        <div class="col-11 text-center">
+            {% for woche in wochen %}
+                <div class="card bg-dark pt-3 mb-5" data-id="{{ woche['wochenNummer']}}">
+                    <h1> Woche <span class="badge badge-secondary"> {{ woche['wochenNummer'] }} </span></h1>
+                    <div class="col-1 align-self-end">
+                        <a class="mb-2 py-0 btn btn-primary" href="/print/{{ woche['wochenNummer'] }}">
+                            <i class="fas fa-print"></i>
+                        </a>
+                    </div>
+
+                    <table class="table mb-3" data-toggle="table">
+                        <thead>
+                        <tr>
+                            <th style="width:17%" onclick="sortTable(0, this)" scope="col"> Tag <i class="fas fa-sort"></i> </th>
+                            <th style="width:17%" onclick="sortTable(1, this)" scope="col"> Lieferant <i class="fas fa-sort"></i> </th>
+                            <th scope="col"> Gericht </th>
+                            <th style="width:5%"scope="col" class="text-center"> Bestellt </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for tag in woche['bestellTage'] %}
+                                <tr class="align-items-center bestellungRow" data-user="{{ app.user.id }}"data-id="{{ (app.user.id in tag['bestellung'].zusagen)? -tag['bestellung'].id : tag['bestellung'].id }}">
+                                    <td> {{ tag['bestellung'].tagName }} </td>
+                                    <td> {{ tag['bestellung'].lieferant }} </td>
+                                    <td> {{ tag['bestellung'].gericht }} </td>
+                                    <td> <button type="button" onClick="toggle({{ tag['bestellung'].id }}, this)" class="py-0 btn {{ (app.user.id in tag['bestellung'].zusagen)? "btn-primary": "btn-outline-primary" }}" data-toggle="tooltip" data-placement="top" title=" {{ tag['zusagenListe']|join (', ') }}"><i class="fas {{ (app.user.id in tag['bestellung'].zusagen)? "fa-check": "fa-plus" }}"></i></button> </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function toggle(bestellung, button)
+        {
+            var tr = $(button.closest("tr"));
+            console.log(tr);
+            $.ajax({
+                url: "/order",
+                type:'POST',
+                data: {
+                    "user":  tr.data('user'),
+                    "id": bestellung,
+                },
+                success: function(data) {
+                    data = JSON.parse(data);
+                    const exit_code = data['exit_code'];
+                    console.log(exit_code);
+                    const button = tr.find(".btn");
+                    const i = button.find(".fas");
+                    console.log(data['zusagen'])
+                    button.prop('title',data['zusagen'].join(", "));
+
+                    if(exit_code==="added")
+                    {
+                        button.addClass("btn-primary");
+                        button.removeClass("btn-outline-primary");
+                        i.removeClass("fa-plus");
+                        i.addClass("fa-check");
+                    }
+                    else if(exit_code==="removed")
+                    {
+                        button.removeClass("btn-primary");
+                        button.addClass("btn-outline-primary");
+                        i.addClass("fa-plus");
+                        i.removeClass("fa-check");
+                    }
+                    else
+                    {
+                        alert(exit_code);
+                    }
+                }
+            })
+        }
+
+
+
+
+
+        $("button[id^='toggle']").click(function(e) {
+            e.preventDefault();
+            console.log("FF");
+            var button = $(this);
+            var tr = button.closest("tr");
+            let no = {
+                "user": tr.data('user'),
+                "id": tr.data('id'),
+            };
+
+            console.log(no);
+            $.ajax({
+                url: "/order",
+                type:'POST',
+                data: {
+                    "user": tr.data('user'),
+                    "id": tr.data('id'),
+                },
+                success: function(exit_code) {
+                    console.log(exit_code);
+                    const button = tr.find(".btn");
+                    tr.attr("data-id", tr.data('id')*-1);  //funktioniert, aber ändert nicht den nächsten Knopfdruck
+
+                    button.attr("id", "le"+tr.data('id'));
+                    if(exit_code==="added")
+                    {
+                        console.log(button);
+                        button.addClass("btn-primary");
+                        button.removeClass("btn-outline-primary");
+                        let i = button.find('.fas');
+                        i.removeClass("fa-plus");
+                        i.addClass("fa-check");
+                        console.log(button);
+                    }
+                    else if(exit_code==="removed")
+                    {
+                        button.removeClass("btn-primary");
+                        button.addClass("btn-outline-primary"); //macht es weg, aber ändert es nicht
+                        console.log(button);
+                        let i = button.find('.fas');
+                        i.addClass("fa-plus");
+                        i.removeClass("fa-check");
+                    }
+                    else
+                    {
+                        alert(exit_code);
+
+                    }
+                }
+            })
+        });
+
+        function toggleOrder(object, user, order)
+        {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+
+                    alert (this.responseText);
+                }
+            };
+            if(object.classList.contains("active"))
+            {
+                order = -order;
+            }
+            xmlhttp.open("GET", "order/" + order + "/"+ user , true);
+            xmlhttp.send();
+
+
+        }
+    </script>
+{% endblock %}
