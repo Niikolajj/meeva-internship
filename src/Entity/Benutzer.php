@@ -15,7 +15,6 @@ class Benutzer implements UserInterface
         return $this->getVorname();
     }
 
-
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -49,6 +48,7 @@ class Benutzer implements UserInterface
 
         return $this;
     }
+
     /**
      * @ORM\Column(type="string", nullable=true)
      */

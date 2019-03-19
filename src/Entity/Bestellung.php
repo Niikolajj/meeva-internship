@@ -70,6 +70,7 @@ class Bestellung
 
         return $this;
     }
+
     public function getTagName()
     {
         return $this->tagName;
@@ -77,31 +78,30 @@ class Bestellung
 
     public function setTagName()
     {
-        switch($this->tag)
-        {
+        switch ($this->tag) {
             case 1:
-                $this->tagName = "Montag";
+                $this->tagName = 'Montag';
                 break;
             case 2:
-                $this->tagName = "Dienstag";
+                $this->tagName = 'Dienstag';
                 break;
             case 3:
-                $this->tagName = "Mittwoch";
+                $this->tagName = 'Mittwoch';
                 break;
             case 4:
-                $this->tagName = "Donnerstag";
+                $this->tagName = 'Donnerstag';
                 break;
             case 5:
-                $this->tagName = "Freitag";
+                $this->tagName = 'Freitag';
                 break;
             case 6:
-                $this->tagName = "Samstag";
+                $this->tagName = 'Samstag';
                 break;
             case 7:
-                $this->tagName = "Sonntag";
+                $this->tagName = 'Sonntag';
                 break;
             default:
-                $this->tagName = "Error";
+                $this->tagName = 'Error';
                 break;
         }
     }

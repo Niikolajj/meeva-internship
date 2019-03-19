@@ -61,23 +61,24 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
             throw new InvalidCsrfTokenException();
         }
         $mmResponse = self::mmCheck($credentials);
-        if($mmResponse['exit_code']!="success")
-        {
+        if ('success' != $mmResponse['exit_code']) {
             throw new CustomUserMessageAuthenticationException('Email could not be found.');
-        }
-        else
-        {
+        } else {
             $user = $this->entityManager->getRepository(Benutzer::class)->findOneBy(['email' => $credentials['email']]);
-            if (!$user) //No user in DB, create new
-            {
+            if (!$user) { //No user in DB, create new
                 $user = new Benutzer();
                 $user->setEmail($mmResponse['user']->email);
                 $this->entityManager->persist($user);
             }
-            if($user->getVorname()!= $mmResponse['user']->first_name)$user->setVorname($mmResponse['user']->first_name);
-            if($user->getNachname()!= $mmResponse['user']->last_name)$user->setNachname($mmResponse['user']->last_name);
+            if ($user->getVorname() != $mmResponse['user']->first_name) {
+                $user->setVorname($mmResponse['user']->first_name);
+            }
+            if ($user->getNachname() != $mmResponse['user']->last_name) {
+                $user->setNachname($mmResponse['user']->last_name);
+            }
             $this->entityManager->flush();
         }
+
         return $user;
     }
 
@@ -109,44 +110,39 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     {
         $curl = curl_init();
 
-        $email = (strpos($credentials['email'], "@"))? $credentials['email'] : $credentials['email']. "@meeva.de";
-        $payload = json_encode(array(
+        $email = (strpos($credentials['email'], '@')) ? $credentials['email'] : $credentials['email'].'@meeva.de';
+        $payload = json_encode([
             'login_id' => $email,
-            'password' => $_POST['password']
-        ));
+            'password' => $_POST['password'],
+        ]);
 
-// Set some options - we are passing in a useragent too here
-        curl_setopt_array($curl, array(
+        // Set some options - we are passing in a useragent too here
+        curl_setopt_array($curl, [
             CURLOPT_RETURNTRANSFER => 1,
             CURLOPT_URL => 'https://mattermost.meeva.de/api/v4/users/login',
             CURLOPT_POST => 1,
-            CURLOPT_POSTFIELDS => $payload
-        ));
+            CURLOPT_POSTFIELDS => $payload,
+        ]);
 
-// Send the request & save response to $resp
+        // Send the request & save response to $resp
         $resp = curl_exec($curl);
 
         $response = json_decode($resp);
-        if(!empty($response->status_code))
-        {
-            if ($response->status_code == '400')
-            {
+        if (!empty($response->status_code)) {
+            if ('400' == $response->status_code) {
                 // Kein Konto mit diesen Daten vorhanden
-                return ["exit_code"=>"Kein Konto"];
-            }else if ($response->status_code == '401')
-            {
+                return ['exit_code' => 'Kein Konto'];
+            } elseif ('401' == $response->status_code) {
                 // Passwort ist falsch
-                return ["exit_code"=>"Passwort falsch"];
+                return ['exit_code' => 'Passwort falsch'];
             }
-
-        }else if ($response->first_name == '' && $response->last_name == '')
-        {
+        } elseif ('' == $response->first_name && '' == $response->last_name) {
             // Trage deinen Vor- oder Nachnamen bei Mattermost ein
-            return ["exit_code"=>"Namen fehlen"];
-        }else{
+            return ['exit_code' => 'Namen fehlen'];
+        } else {
             //checkUserDB($response);
             //loginUserDB($response);
-            return ["exit_code"=>"success", "user"=>$response];
+            return ['exit_code' => 'success', 'user' => $response];
         }
         curl_close($curl);
     }
