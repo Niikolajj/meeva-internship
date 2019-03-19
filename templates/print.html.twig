@@ -22,7 +22,7 @@
                         <div class='card-body'>
                             {% if tag['zusagenListe']|length > 0 %}
                                 <ul class='namelist mb-0'>
-                                    {% for name in tag['zusagenListe'] %}
+                                    {% for name in tag['zusagenListe']|sortbyfield('vorname') %}
                                         <li class='mr-2'> {{ name }} <i class="far fa-square"></i> </li>
                                     {% endfor %}
                                 </ul>
