@@ -72,12 +72,12 @@ class FrontController extends AbstractController
     public function print($week)
     {
         $entityManager = $this->getDoctrine()->getManager();
-        return $this -> render('print.html.twig', array('woche' => self::getWeek($week, $entityManager)));
+        return $this -> render('print.html.twig', array('woche' => self::getWeekLieferant($week, $entityManager, "Ziff")));
     }
 
     public function getWeek($week, $entityManager)
     {
-
+        return self::getWeekLieferant($week, $entityManager, null);
         $bestellungen = $entityManager->getRepository(Bestellung::class)->findBy(array("woche"=>$week));
 
         $bestellTage = [];
@@ -85,10 +85,31 @@ class FrontController extends AbstractController
         {
             $zusagenListe = $this->getZusagenListe($bestellung->getZusagen(), $entityManager);
             $bestellung->setTagName();
-            $bestellTage[] = array (
-                "bestellung" => $bestellung,
-                "zusagenListe" => $zusagenListe,
-            );
+
+        }
+
+        $bestellWoche = [];
+        $bestellWoche += ["wochenNummer"=>$week];
+        $bestellWoche += ["bestellTage"=>$bestellTage];  //FINDBY
+        return $bestellWoche;
+
+    }
+    public function getWeekLieferant($week, $entityManager, $lieferant)
+    {
+        $bestellungen = $entityManager->getRepository(Bestellung::class)->findBy(array("woche"=>$week));
+
+        $bestellTage = [];
+        foreach($bestellungen as $bestellung)
+        {
+            $zusagenListe = $this->getZusagenListe($bestellung->getZusagen(), $entityManager);
+            $bestellung->setTagName();
+            if($bestellung->getLieferant() == $lieferant || $lieferant == null)
+            {
+                $bestellTage[] = array (
+                    "bestellung" => $bestellung,
+                    "zusagenListe" => $zusagenListe,
+                );
+            }
         }
 
         $bestellWoche = [];
