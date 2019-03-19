@@ -68,16 +68,15 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         else
         {
             $user = $this->entityManager->getRepository(Benutzer::class)->findOneBy(['email' => $credentials['email']]);
-
-            if (!$user)
+            if (!$user) //No user in DB, create new
             {
                 $user = new Benutzer();
                 $user->setEmail($mmResponse['user']->email);
-                $user->setVorname($mmResponse['user']->first_name);
-                $user->setNachname($mmResponse['user']->last_name);
                 $this->entityManager->persist($user);
-                $this->entityManager->flush();
             }
+            if($user->getVorname()!= $mmResponse['user']->first_name)$user->setVorname($mmResponse['user']->first_name);
+            if($user->getNachname()!= $mmResponse['user']->last_name)$user->setNachname($mmResponse['user']->last_name);
+            $this->entityManager->flush();
         }
         return $user;
     }
