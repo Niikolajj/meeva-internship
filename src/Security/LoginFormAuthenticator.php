@@ -102,7 +102,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
     protected function getLoginUrl()
     {
-        return $this->urlGenerator->generate('app_login');
+        return $this->urlGenerator->generate('food');
     }
 
     public function mmCheck($credentials)
@@ -150,28 +150,5 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
             return ["exit_code"=>"success", "user"=>$response];
         }
         curl_close($curl);
-
-        function checkUserDB($loginuser) //create DB entry if needed
-        {
-            include_once "sqldb.php";
-            $currUser = listSQL("SELECT * FROM user WHERE email ='" . $loginuser->email ."'");
-            if($currUser == null)
-            {
-                echo doSQL("INSERT INTO user (email, vorname, nachname) VALUES ('".$loginuser->email."', '".utf8_decode($loginuser->first_name)."', '".utf8_decode($loginuser->last_name)."')");
-            }
-        }
-        function loginUserDB($loginuser) //fill Session Data with DB data
-        {
-            include_once "sqldb.php";
-            $currUser = listSQL("SELECT * FROM user WHERE email ='" . $loginuser->email ."'");
-            if($currUser != null)
-            {
-                $_SESSION['userid'] = $currUser['id'];
-                $_SESSION['admin']= $currUser['admin'];
-                $_SESSION['email'] = $currUser['admin'];
-                $_SESSION['first_name'] = $currUser['vorname'];
-                $_SESSION['last_name'] = $currUser['nachname'];
-            }
-        }
     }
 }

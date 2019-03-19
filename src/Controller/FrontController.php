@@ -150,7 +150,7 @@ class FrontController extends AbstractController
         return $this ->render('index.html.twig');
     }
     /**
-     * @Route("/admin/{week}", name="admin", requirements={"week"="\d+"})
+     * @Route("/admin/{week}", name="adminW", requirements={"week"="\d+"})
      */
     public function adminW($week)
     {

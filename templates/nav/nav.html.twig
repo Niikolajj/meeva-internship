@@ -35,7 +35,7 @@
                             </div>
                         {% else %}
                             <div class="text-center">Mattermost Log-in</div>
-                                <form id="loginForm" class="px-4 py-3" action="/" method="POST">
+                                <form id="loginForm" class="px-4 py-3" action="{{ path('app_login') }}" method="POST">
                                     <div class="input-group mb-3">
                                         <input type="email" class="form-control placeholder-shown" id="inputEmail" placeholder="Name" aria-label="Username" aria-describedby="basic-addon1" name="email" required autofocus>
                                         {#<div class="input-group-append">
