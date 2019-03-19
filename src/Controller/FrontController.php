@@ -201,8 +201,10 @@ class FrontController extends AbstractController
             }
             $eM->flush();
         }
-        return new Response(json_encode(
-            ["exit_code"=>$exit_code]),
+        return new Response(json_encode([
+            "exit_code"=>$exit_code,
+            "id"=>$bestellung->getId(),
+            ]),
             Response::HTTP_OK,
             ['content-type' => 'text/html']
         );

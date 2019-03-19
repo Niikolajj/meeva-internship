@@ -21,7 +21,7 @@
                         <i class="fas fa-print"></i>
                     </button>
                 </div>
-                <table class="table-responsive">
+                <table class="table-responsive" id="inputTable">
                     <thead>
                     <tr>
                         <th class="col-2" onclick="sortTable(0, this)" scope="col"> Tag</th>
@@ -99,15 +99,18 @@
         function processOrder(button)
         {
             var data={};
-            var tr = $(button.closest("tr"));
+            var tr = button.closest("tr");
             console.log($('#wochenNr'));
             data["woche"]=$('#wochenNr').val();
-            data["changed"]=tr.data('changed');
-            data["id"]=tr.data('id');
+            console.log(tr);
+            data["changed"]=tr.dataset.changed;
+            data["id"]=tr.dataset.id;
+            tr = $(tr);
             tr.find('input,select,textarea').each(function(){
                 data[$(this).attr('name')]=$(this).val();
             });
-            var order = $(button).data('function');
+
+            var order = button.dataset.function;
             console.log(data);
             $.ajax({
                 url: "/admin/"+order,
@@ -117,7 +120,7 @@
                     data = JSON.parse(data);
                     const exit_code = data['exit_code'];
                     console.log(exit_code);
-                    console.log(data['dump']);
+                    console.log(data['id']);
                     const button = tr.find(".btn-order");
                     const i = button.find("i");
                     console.log(data)
@@ -128,22 +131,22 @@
                         button.addClass("btn-primary");
                         button.removeClass("btn-outline-primary");
                         button.attr('data-function', 'delete');
-                        i.removeClass("fa-plus");
-                        i.addClass("fa-trash-alt");
+                        i[0].className = "fas fa-trash-alt";
+                        tr.attr("data-id", data['id']);
+
                     }
                     else if(exit_code==="removed")
                     {
                         button.removeClass("btn-primary");
                         button.addClass("btn-outline-primary");
                         button.attr('data-function', 'add');
-                        i.addClass("fa-trash-alt");
-                        i.removeClass("fa-plus");
+                        i[0].className = "fas fa-plus";
+                        tr.attr("data-id", "");
                     }
                     else if(exit_code==="updated")
                     {
                         button.attr('data-function', 'delete');
-                        i.addClass("fa-trash-alt");
-                        i.removeClass("fa-save");
+                        i[0].className = "fas fa-trash-alt";
                     }
                     else
                     {
@@ -163,8 +166,9 @@
                 console.log(button);
                 const i = button.find("i");
                 console.log(i);
-                i.removeClass("fa-trash-alt");
-                i.addClass("fa-save");
+                i[0].className = "fas fa-save";
+                //i.removeClass("fa-trash-alt");
+                //i.addClass("fa-save");
             }
             else
             {
@@ -175,6 +179,16 @@
         {
             const woche = document.getElementById("wochenNr").value;
             window.location.href="/admin/"+ woche;
+        }
+        function activeWeek(week)
+        {
+            $('#inputTable').find('tr').each(function(){
+                $(this).attr('data-id', '');
+                $(this).find('.btn-order').each(function(){
+                    $(this).attr("data-function", "add");
+                    $(this).find('i')[0].className = "fas fa-plus";
+                })
+            });
         }
     </script>
 
