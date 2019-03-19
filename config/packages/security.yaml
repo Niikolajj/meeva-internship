@@ -1,5 +1,5 @@
 security:
-    access_denied_url: /food
+    access_denied_url: food
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         # used to reload user from session & other features (e.g. switch_user)

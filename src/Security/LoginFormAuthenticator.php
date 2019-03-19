@@ -102,7 +102,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
     protected function getLoginUrl()
     {
-        return $this->urlGenerator->generate('food');
+        return $this->urlGenerator->generate('app_login');
     }
 
     public function mmCheck($credentials)
@@ -113,7 +113,6 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         $payload = json_encode(array(
             'login_id' => $email,
             'password' => $_POST['password']
-
         ));
 
 // Set some options - we are passing in a useragent too here
