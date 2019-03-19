@@ -4,10 +4,10 @@
         <div class="col-2">
             <a href="../"> <img src="/media/logo.png"/> </a>
         </div>
-        <div>
+        <div class="col">
             <i>- beta -</i>
         </div>
-        <div class="text-right" id="navbarText">
+        <div class="col-2" id="navbarText">
             <div class="input-group mb-3">
                 <div class="dropdown show">
                     {#
@@ -30,9 +30,9 @@
                             {% if "ROLE_ADMIN" in app.user.roles %}
                                 <a class="dropdown-item" href="/admin">Admin Center</a>
                             {% endif %}
-                            <form class="text-center mt-2" id="logoutForm" action="request/logout.php">
-                                <button class="btn btn-outline-primary" type="submit" name="logOut" value=" (N/A) "/>Log Out</button>
-                            </form>
+                            <div class="text-center mt-2" id="logoutForm">
+                                <a href="{{ logout_path(key = null) }}" class="btn btn-outline-primary" name="logOut" value=" (N/A) "/>Log Out</a>
+                            </div>
                         {% else %}
                             <div class="text-center">Mattermost Log-in</div>
                                 <form id="loginForm" class="px-4 py-3" action="/" method="POST">

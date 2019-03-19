@@ -60,14 +60,25 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         if (!$this->csrfTokenManager->isTokenValid($token)) {
             throw new InvalidCsrfTokenException();
         }
-
-        $user = $this->entityManager->getRepository(Benutzer::class)->findOneBy(['email' => $credentials['email']]);
-
-        if (!$user) {
-            // fail authentication with a custom error
+        $mmResponse = self::mmCheck($credentials);
+        if($mmResponse['exit_code']!="success")
+        {
             throw new CustomUserMessageAuthenticationException('Email could not be found.');
         }
+        else
+        {
+            $user = $this->entityManager->getRepository(Benutzer::class)->findOneBy(['email' => $credentials['email']]);
 
+            if (!$user)
+            {
+                $user = new Benutzer();
+                $user->setEmail($mmResponse['user']->email);
+                $user->setVorname($mmResponse['user']->first_name);
+                $user->setNachname($mmResponse['user']->last_name);
+                $this->entityManager->persist($user);
+                $this->entityManager->flush();
+            }
+        }
         return $user;
     }
 
@@ -93,5 +104,75 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     protected function getLoginUrl()
     {
         return $this->urlGenerator->generate('app_login');
+    }
+
+    public function mmCheck($credentials)
+    {
+        $curl = curl_init();
+
+        $email = (strpos($credentials['email'], "@"))? $credentials['email'] : $credentials['email']. "@meeva.de";
+        $payload = json_encode(array(
+            'login_id' => $email,
+            'password' => $_POST['password']
+
+        ));
+
+// Set some options - we are passing in a useragent too here
+        curl_setopt_array($curl, array(
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => 'https://mattermost.meeva.de/api/v4/users/login',
+            CURLOPT_POST => 1,
+            CURLOPT_POSTFIELDS => $payload
+        ));
+
+// Send the request & save response to $resp
+        $resp = curl_exec($curl);
+
+        $response = json_decode($resp);
+        if(!empty($response->status_code))
+        {
+            if ($response->status_code == '400')
+            {
+                // Kein Konto mit diesen Daten vorhanden
+                return ["exit_code"=>"Kein Konto"];
+            }else if ($response->status_code == '401')
+            {
+                // Passwort ist falsch
+                return ["exit_code"=>"Passwort falsch"];
+            }
+
+        }else if ($response->first_name == '' && $response->last_name == '')
+        {
+            // Trage deinen Vor- oder Nachnamen bei Mattermost ein
+            return ["exit_code"=>"Namen fehlen"];
+        }else{
+            //checkUserDB($response);
+            //loginUserDB($response);
+            return ["exit_code"=>"success", "user"=>$response];
+        }
+        curl_close($curl);
+
+        function checkUserDB($loginuser) //create DB entry if needed
+        {
+            include_once "sqldb.php";
+            $currUser = listSQL("SELECT * FROM user WHERE email ='" . $loginuser->email ."'");
+            if($currUser == null)
+            {
+                echo doSQL("INSERT INTO user (email, vorname, nachname) VALUES ('".$loginuser->email."', '".utf8_decode($loginuser->first_name)."', '".utf8_decode($loginuser->last_name)."')");
+            }
+        }
+        function loginUserDB($loginuser) //fill Session Data with DB data
+        {
+            include_once "sqldb.php";
+            $currUser = listSQL("SELECT * FROM user WHERE email ='" . $loginuser->email ."'");
+            if($currUser != null)
+            {
+                $_SESSION['userid'] = $currUser['id'];
+                $_SESSION['admin']= $currUser['admin'];
+                $_SESSION['email'] = $currUser['admin'];
+                $_SESSION['first_name'] = $currUser['vorname'];
+                $_SESSION['last_name'] = $currUser['nachname'];
+            }
+        }
     }
 }
