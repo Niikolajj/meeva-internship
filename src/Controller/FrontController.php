@@ -140,10 +140,54 @@ class FrontController extends AbstractController
      */
     public function adminW($week)
     {
-        $eM    = $this->getDoctrine()->getManager();
+        $eM = $this->getDoctrine()->getManager();
         $woche = self::getWeek($week, $eM);
 
         return $this->render('admin/tables.html.twig', ['woche' => $woche, 'users' => self::getBenutzerListe($eM)]);
+    }
+
+    /**
+     * @Route("/admin/user/{cmd}", name="processUser")
+     */
+    public function processUser($cmd, Request $r)
+    {
+        $exit_code = 'nothing done';
+
+        $user = new Benutzer();
+        $eM = $this->getDoctrine()->getManager();
+        dump($r->request);
+        if ('add' != $cmd) {
+            $user = $eM->getRepository(Benutzer::class)->find($r->request->get('user'));
+            if ('delete' == $cmd) {
+                $eM->remove($user);
+                $exit_code = 'deleted';
+            } elseif ('update' == $cmd) {
+                $user->setVorname($r->request->get('vorname'));
+                $user->setNachname($r->request->get('nachname'));
+                $user->setEmail($r->request->get('email'));
+                (null == $r->request->get('roles')) ? $user->setRoles([]) : $user->setRoles($r->request->get('roles'));
+                $exit_code = 'updated';
+            }
+        } else {
+            if ($eM->getRepository(Benutzer::class)->findOneBy(['email' => $r->request->get('email')])) {
+                $exit_code = 'duplicate email';
+            } else {
+                $user->setVorname($r->request->get('vorname'));
+                $user->setNachname($r->request->get('nachname'));
+                $user->setEmail($r->request->get('email'));
+                (null == $r->request->get('roles')) ? $user->setRoles([]) : $user->setRoles($r->request->get('roles'));
+                $eM->persist($user);
+                $exit_code = 'added';
+            }
+        }
+        $eM->flush();
+
+        return new Response(json_encode([
+            'exit_code' => $exit_code,
+        ]),
+            Response::HTTP_OK,
+            ['content-type' => 'text/html']
+        );
     }
 
     /**
@@ -154,36 +198,34 @@ class FrontController extends AbstractController
         $exit_code = 'nothing done';
 
         $bestellung = new Bestellung();
-        if ($r->isXmlHttpRequest()) {
-            $eM = $this->getDoctrine()->getManager();
-            if ('add' != $cmd) {
-                $bestellung = $eM->getRepository(Bestellung::class)->find($r->request->get('id'));
-                if ('delete' == $cmd) {
-                    $eM->remove($bestellung);
-                    $exit_code = 'deleted';
-                } elseif ('update' == $cmd) {
-                    $bestellung->setTag($r->request->get('tag'));
-                    $bestellung->setWoche($r->request->get('woche'));
-                    $bestellung->setGericht($r->request->get('gericht'));
-                    $bestellung->setLieferant($r->request->get('lieferant'));
-                    (empty($r->request->get('zusagen')) ?: $bestellung->setZusagen(implode(',', $r->request->get('zusagen'))));
-                    $exit_code = 'updated';
-                }
-            } else {
+        $eM = $this->getDoctrine()->getManager();
+        if ('add' != $cmd) {
+            $bestellung = $eM->getRepository(Bestellung::class)->find($r->request->get('id'));
+            if ('delete' == $cmd) {
+                $eM->remove($bestellung);
+                $exit_code = 'deleted';
+            } elseif ('update' == $cmd) {
                 $bestellung->setTag($r->request->get('tag'));
                 $bestellung->setWoche($r->request->get('woche'));
                 $bestellung->setGericht($r->request->get('gericht'));
                 $bestellung->setLieferant($r->request->get('lieferant'));
                 (empty($r->request->get('zusagen')) ?: $bestellung->setZusagen(implode(',', $r->request->get('zusagen'))));
-                $eM->persist($bestellung);
-                $exit_code = 'added';
+                $exit_code = 'updated';
             }
-            $eM->flush();
+        } else {
+            $bestellung->setTag($r->request->get('tag'));
+            $bestellung->setWoche($r->request->get('woche'));
+            $bestellung->setGericht($r->request->get('gericht'));
+            $bestellung->setLieferant($r->request->get('lieferant'));
+            (empty($r->request->get('zusagen')) ?: $bestellung->setZusagen(implode(',', $r->request->get('zusagen'))));
+            $eM->persist($bestellung);
+            $exit_code = 'added';
         }
+        $eM->flush();
 
         return new Response(json_encode([
             'exit_code' => $exit_code,
-            'id'        => $bestellung->getId(),
+            'id' => $bestellung->getId(),
             ]),
             Response::HTTP_OK,
             ['content-type' => 'text/html']

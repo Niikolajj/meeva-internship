@@ -2,38 +2,42 @@
 {% block body %}
     <div class="row justify-content-center">
         <div class="col-11">
-            <div class="card bg-dark editTable">
-                <div class="titlebar align-content-center">
-                    <div class="mx-auto input-group mt-3 col-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="basic-addon1">Woche</span>
-                        </div>
-                        <input onChange="activeWeek(this)" type="number" min="1" class="form-control" placeholder="" aria-label="Woche" name="woche" id="wochenNr" value="{{ woche["wochenNummer"] }}">
-                        <div class="input-group-append">
-                            <button class="btn btn-primary" onClick="loadWeek(event)">
-                                <i class="fas fa-sync-alt"></i>
-                            </button>
+            <div class="card bg-black">
+                <div class="card-header bg-black">
+                    <h3 class="mb-0">Bestellungen</h3>
+                </div>
+                <div class="card-body bg-dark editTable">
+                    <div class="titlebar align-content-center">
+                        <div class="mx-auto input-group mt-3 col-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1">Woche</span>
+                            </div>
+                            <input onChange="activeWeek(this)" type="number" min="1" class="form-control" placeholder="" aria-label="Woche" name="woche" id="wochenNr" value="{{ woche["wochenNummer"] }}">
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" onClick="loadWeek(event)">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="align-self-end">
-                    <button class="py-0 mr-4 mb-2 btn btn-primary" onClick="printTable(event)">
-                        <i class="fas fa-print"></i>
-                    </button>
-                </div>
-                <table class="table-responsive" id="inputTable">
-                    <thead>
-                    <tr>
-                        <th class="col-2" onclick="sortTable(0, this)" scope="col"> Tag</th>
-                        <th class="col-1" onclick="sortTable(1, this)" scope="col"> Lieferant</th>
-                        <th class="" scope="col">Gericht</th>
-                        <th class="col-2" scope="col">Zusagen</th>
-                        <th class="col-1 text-center" scope="col" >
-                            <button class="py-0 btn btn-primary" onClick="addLine(this)"><i class="fas fa-plus"></i></button>
-                        </th>
-                    </tr>
-                    </thead>
-                    <tbody id="tableBody">
+                    <div class="align-self-end">
+                        <button class="py-0 mr-4 mb-2 btn btn-primary" onClick="printTable(event)">
+                            <i class="fas fa-print"></i>
+                        </button>
+                    </div>
+                    <table class="table-responsive" id="inputTable">
+                        <thead>
+                        <tr>
+                            <th class="col-2" onclick="sortTable(0, this)" scope="col"> Tag</th>
+                            <th class="col-1" onclick="sortTable(1, this)" scope="col"> Lieferant</th>
+                            <th class="" scope="col">Gericht</th>
+                            <th class="col-2" scope="col">Zusagen</th>
+                            <th class="col-1 text-center" scope="col" >
+                                <button class="py-0 btn btn-primary" onClick="addLine(this)"><i class="fas fa-plus"></i></button>
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody id="tableBody">
                         {% for tag in woche['bestellTage'] %}
                             <tr class="align-items-center" data-id="{{ tag['bestellung'].id }}" data-changed="false">
                                 <td>
@@ -56,7 +60,7 @@
 
                                         {% for user in users %}
 
-                                        <option value="{{ user.id }}" {{ (user in tag['zusagenListe'])? "selected": "" }}>{{ user.vorname }}</option>
+                                            <option value="{{ user.id }}" {{ (user in tag['zusagenListe'])? "selected": "" }}>{{ user.vorname }}</option>
                                         {% endfor %}
                                     </select>
                                 </td>
@@ -78,7 +82,7 @@
                             <td> <input class="form-control" type="text" name="lieferant" value="" oninput="setChanged(this)"/></td>
                             <td> <input class="form-control" type="text" name="gericht" value="" oninput="setChanged(this)"/></td>
                             <td>
-                                <select class="selectpicker" name="zusagen" multiple data-selected-text-format="count>0" onChange="setChanged(this)">
+                                <select class="selectpicker" name="zusagen[]" multiple data-selected-text-format="count>0" onChange="setChanged(this)">
                                     {% for user in users %}
                                         <option value="{{ user.id }}">{{ user.vorname }}</option>
                                     {% endfor %}
@@ -86,8 +90,57 @@
                             </td>
                             <td class="text-center"> <button class="py-0 btn btn-outline-primary btn-order" onClick="processOrder(this)" data-function="add"><i class="fas fa-plus"></i></button></td>
                         </tr>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="card bg-black">
+            <div class="card-header bg-black">
+                <h3 class="mb-0">Benutzer</h3>
+            </div>
+            <div class="card-body bg-dark">
+                <form id="userForm" data-function="add" method="POST">
+                    <div class="form-group row">
+                        <div class="col-6">
+                            <select id="userSelect" class="selectpicker w-100" name="user" onchange="userSelection(this)">
+                                <option value="new" selected>Benutzer hinzufügen</option>
+                                {% for user in users|sortbyfield('vorname') %}
+                                    <option value="{{ user.id }}">{{ user.vorname }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <select class="selectpicker w-100" name="roles[]" multiple onchange="userEdit(this)">
+                                <option value="" selected>User</option>
+                                <option value="ROLE_ADMIN">Admin</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col">
+                            <input class="form-control" type="text" name="vorname" placeholder="Vorname" oninput="userEdit(this)" required>
+                        </div>
+                        <div class="col">
+                            <input class="form-control" type="text" name="nachname" placeholder="Nachname" oninput="userEdit(this)">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col">
+                            <input class="form-control" type="email" name="email" required placeholder="Email" oninput="userEdit(this)">
+                        </div>
+                    </div>
+                    <div class="form-group row justify-content-end">
+                        <div class="col-auto">
+                            <button class="btn btn-primary"> <!--onClick="proccUser(this)"-->
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -95,6 +148,7 @@
 {% block javascripts %}
     {{ parent() }}
     <script>
+        //ORDERING PROCESS
         $('select').selectpicker();
         function processOrder(button)
         {
@@ -155,6 +209,7 @@
                 }
             })
         }
+        //ORDERING BUTTON WATCH
         function setChanged(obj)
         {
             tr = $(obj).closest("tr");
@@ -175,6 +230,8 @@
                 console.log("");
             }
         }
+
+        //NEW WEEK RELOAD
         function loadWeek(event)
         {
             const woche = document.getElementById("wochenNr").value;
@@ -190,6 +247,58 @@
                 })
             });
         }
+
+        //USER FORM
+        function userSelection(selectpicker)
+        {
+            form = $(selectpicker).closest("form");
+            if(selectpicker.value=="new")
+            {
+                form[0].dataset.function = "add";
+                form.find("i")[0].classList="fas fa-plus";
+            }
+            else
+            {
+                form[0].dataset.function ="delete";
+                form.find("i")[0].classList="fas fa-trash-alt";
+            }
+            console.log(selectpicker.value);
+        }
+        function userEdit(input)
+        {
+            var form = $(input).closest("form");
+            if(form.find('#userSelect')[0].value=="new")
+            {
+                form[0].dataset.function = "add";
+                form.find("i")[0].classList="fas fa-plus";
+            }
+            else
+            {
+                form[0].dataset.function ="update";
+                form.find("i")[0].classList="fas fa-save";
+            }
+
+        }
+        $('#userForm').submit(function(e) {
+        //function proccUser(button) {
+            e.preventDefault();
+            e.stopPropagation();
+            form = this;
+            //var form = $(button).closest("form");
+            console.log(form);
+            var cmd = form.dataset.function;
+            $.ajax({
+                type: "POST",
+                url: "admin/user/"+cmd,
+                data: $(form).serialize(), // serializes the form's elements.
+                success: function(data)
+                {
+                    form.dataset.function ="delete";
+                    $(form).find("i")[0].classList="fas fa-trash-alt";
+                    alert(data); // show response from the php script.
+                }
+            });
+        });
     </script>
 
 
