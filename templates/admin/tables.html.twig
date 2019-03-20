@@ -104,7 +104,7 @@
             </div>
             <div class="card-body bg-dark">
                 <form id="userForm" data-function="add" method="POST">
-                    <div class="form-group row">
+                    <div class="form-group form-row">
                         <div class="col-6">
                             <select id="userSelect" class="selectpicker w-100" name="user" onchange="userSelection(this)">
                                 <option value="new" selected>Benutzer hinzufügen</option>
@@ -120,7 +120,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group form-row">
                         <div class="col">
                             <input class="form-control" type="text" name="vorname" placeholder="Vorname" oninput="userEdit(this)" required>
                         </div>
@@ -128,12 +128,12 @@
                             <input class="form-control" type="text" name="nachname" placeholder="Nachname" oninput="userEdit(this)">
                         </div>
                     </div>
-                    <div class="form-group row">
+                    <div class="form-group form-row">
                         <div class="col">
                             <input class="form-control" type="email" name="email" required placeholder="Email" oninput="userEdit(this)">
                         </div>
                     </div>
-                    <div class="form-group row justify-content-end">
+                    <div class="form-group form-row justify-content-end">
                         <div class="col-auto">
                             <button class="btn btn-primary"> <!--onClick="proccUser(this)"-->
                                 <i class="fas fa-plus"></i>
