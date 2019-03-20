@@ -19,11 +19,11 @@ class FrontController extends AbstractController
         $exit_code = 'nothing done';
         $orderNr   = $request->request->get('id');
         $user      = $request->request->get('user');
-        $order   = abs($orderNr);
-        $eM      = $this->getDoctrine()->getManager();
-        $order   = $eM->getRepository(Bestellung::class)->findBy(['id' => $order]);
-        $zusagen = $order[0]->getZusagen();
-        $zusagen = explode(',', $zusagen);
+        $order     = abs($orderNr);
+        $eM        = $this->getDoctrine()->getManager();
+        $order     = $eM->getRepository(Bestellung::class)->findBy(['id' => $order]);
+        $zusagen   = $order[0]->getZusagen();
+        $zusagen   = explode(',', $zusagen);
 
         if (false !== ($key = array_search($user, $zusagen))) {
             unset($zusagen[$key]);
@@ -140,7 +140,7 @@ class FrontController extends AbstractController
      */
     public function adminW($week)
     {
-        $eM = $this->getDoctrine()->getManager();
+        $eM    = $this->getDoctrine()->getManager();
         $woche = self::getWeek($week, $eM);
 
         return $this->render('admin/tables.html.twig', ['woche' => $woche, 'users' => self::getBenutzerListe($eM)]);
@@ -154,7 +154,7 @@ class FrontController extends AbstractController
         $exit_code = 'nothing done';
 
         $user = new Benutzer();
-        $eM = $this->getDoctrine()->getManager();
+        $eM   = $this->getDoctrine()->getManager();
         dump($r->request);
         if ('add' != $cmd) {
             $user = $eM->getRepository(Benutzer::class)->find($r->request->get('user'));
@@ -198,7 +198,7 @@ class FrontController extends AbstractController
         $exit_code = 'nothing done';
 
         $bestellung = new Bestellung();
-        $eM = $this->getDoctrine()->getManager();
+        $eM         = $this->getDoctrine()->getManager();
         if ('add' != $cmd) {
             $bestellung = $eM->getRepository(Bestellung::class)->find($r->request->get('id'));
             if ('delete' == $cmd) {
@@ -225,7 +225,7 @@ class FrontController extends AbstractController
 
         return new Response(json_encode([
             'exit_code' => $exit_code,
-            'id' => $bestellung->getId(),
+            'id'        => $bestellung->getId(),
             ]),
             Response::HTTP_OK,
             ['content-type' => 'text/html']
