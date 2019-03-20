@@ -60,6 +60,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         if (!$this->csrfTokenManager->isTokenValid($token)) {
             throw new InvalidCsrfTokenException();
         }
+        $credentials['email'] = (strpos($credentials['email'], '@')) ? $credentials['email'] : $credentials['email'] . '@meeva.de';
         $mmResponse = self::mmCheck($credentials);
         if ('success' != $mmResponse['exit_code']) {
             throw new CustomUserMessageAuthenticationException('Email could not be found.');
@@ -110,7 +111,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     {
         $curl = curl_init();
 
-        $email   = (strpos($credentials['email'], '@')) ? $credentials['email'] : $credentials['email'] . '@meeva.de';
+        $email   = $credentials['email'];
         $payload = json_encode([
             'login_id' => $email,
             'password' => $_POST['password'],
