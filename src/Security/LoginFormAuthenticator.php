@@ -28,8 +28,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
     public function __construct(EntityManagerInterface $entityManager, UrlGeneratorInterface $urlGenerator, CsrfTokenManagerInterface $csrfTokenManager)
     {
-        $this->entityManager = $entityManager;
-        $this->urlGenerator = $urlGenerator;
+        $this->entityManager    = $entityManager;
+        $this->urlGenerator     = $urlGenerator;
         $this->csrfTokenManager = $csrfTokenManager;
     }
 
@@ -42,8 +42,8 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     public function getCredentials(Request $request)
     {
         $credentials = [
-            'email' => $request->request->get('email'),
-            'password' => $request->request->get('password'),
+            'email'      => $request->request->get('email'),
+            'password'   => $request->request->get('password'),
             'csrf_token' => $request->request->get('_csrf_token'),
         ];
         $request->getSession()->set(
@@ -87,7 +87,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         // Check the user's password or other credentials and return true or false
         // If there are no credentials to check, you can just return true
         return true;
-        throw new \Exception('TODO: check the credentials inside '.__FILE__);
+        throw new \Exception('TODO: check the credentials inside ' . __FILE__);
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, $providerKey)
@@ -98,7 +98,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 
         // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
         return new RedirectResponse($this->urlGenerator->generate('food'));
-        throw new \Exception('TODO: provide a valid redirect inside '.__FILE__);
+        throw new \Exception('TODO: provide a valid redirect inside ' . __FILE__);
     }
 
     protected function getLoginUrl()
@@ -110,7 +110,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
     {
         $curl = curl_init();
 
-        $email = (strpos($credentials['email'], '@')) ? $credentials['email'] : $credentials['email'].'@meeva.de';
+        $email   = (strpos($credentials['email'], '@')) ? $credentials['email'] : $credentials['email'] . '@meeva.de';
         $payload = json_encode([
             'login_id' => $email,
             'password' => $_POST['password'],
@@ -119,9 +119,9 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         // Set some options - we are passing in a useragent too here
         curl_setopt_array($curl, [
             CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => 'https://mattermost.meeva.de/api/v4/users/login',
-            CURLOPT_POST => 1,
-            CURLOPT_POSTFIELDS => $payload,
+            CURLOPT_URL            => 'https://mattermost.meeva.de/api/v4/users/login',
+            CURLOPT_POST           => 1,
+            CURLOPT_POSTFIELDS     => $payload,
         ]);
 
         // Send the request & save response to $resp

@@ -2,12 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Benutzer;
+use App\Entity\Bestellung;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Entity\Bestellung;
-use App\Entity\Benutzer;
 
 class FrontController extends AbstractController
 {
@@ -17,26 +17,24 @@ class FrontController extends AbstractController
     public function order(Request $request)
     {
         $exit_code = 'nothing done';
-        $orderNr = $request->request->get('id');
-        $user = $request->request->get('user');
-        if ($request->isXmlHttpRequest()) {
-            $order = abs($orderNr);
-            $eM = $this->getDoctrine()->getManager();
-            $order = $eM->getRepository(Bestellung::class)->findBy(['id' => $order]);
-            $zusagen = $order[0]->getZusagen();
-            $zusagen = explode(',', $zusagen);
+        $orderNr   = $request->request->get('id');
+        $user      = $request->request->get('user');
+        $order   = abs($orderNr);
+        $eM      = $this->getDoctrine()->getManager();
+        $order   = $eM->getRepository(Bestellung::class)->findBy(['id' => $order]);
+        $zusagen = $order[0]->getZusagen();
+        $zusagen = explode(',', $zusagen);
 
-            if (false !== ($key = array_search($user, $zusagen))) {
-                unset($zusagen[$key]);
-                $exit_code = 'removed';
-            } else {
-                $zusagen[] = $user;
-                $exit_code = 'added';
-            }
-            $zusagenListe = implode(',', array_filter(array_unique($zusagen)));
-            $order[0]->setZusagen($zusagenListe);
-            $eM->flush();
+        if (false !== ($key = array_search($user, $zusagen))) {
+            unset($zusagen[$key]);
+            $exit_code = 'removed';
+        } else {
+            $zusagen[] = $user;
+            $exit_code = 'added';
         }
+        $zusagenListe = implode(',', array_filter(array_unique($zusagen)));
+        $order[0]->setZusagen($zusagenListe);
+        $eM->flush();
 
         return new Response(
             json_encode(['exit_code' => $exit_code, 'zusagen' => $this->getZusagenListe($zusagenListe, $eM)]),
@@ -50,7 +48,7 @@ class FrontController extends AbstractController
      */
     public function food()
     {
-        $wochen = [];
+        $wochen        = [];
         $entityManager = $this->getDoctrine()->getManager();
         for ($i = 0; $i < 2; ++$i) {
             $wochen[] = self::getWeek(self::latestWeek() - $i, $entityManager);
@@ -96,7 +94,7 @@ class FrontController extends AbstractController
             $bestellung->setTagName();
             if ($bestellung->getLieferant() == $lieferant || null == $lieferant) {
                 $bestellTage[] = [
-                    'bestellung' => $bestellung,
+                    'bestellung'   => $bestellung,
                     'zusagenListe' => $zusagenListe,
                 ];
             }
@@ -111,8 +109,8 @@ class FrontController extends AbstractController
     public function getZusagenListe($zusagen, $eM)
     {
         $zusagenListe = [];
-        $users = $eM->getRepository(Benutzer::class)->findAll();
-        $zusagen = explode(',', $zusagen);
+        $users        = $eM->getRepository(Benutzer::class)->findAll();
+        $zusagen      = explode(',', $zusagen);
         foreach ($users as $user) {
             if (in_array($user->getId(), $zusagen)) {
                 $zusagenListe[] = $user;
@@ -142,7 +140,7 @@ class FrontController extends AbstractController
      */
     public function adminW($week)
     {
-        $eM = $this->getDoctrine()->getManager();
+        $eM    = $this->getDoctrine()->getManager();
         $woche = self::getWeek($week, $eM);
 
         return $this->render('admin/tables.html.twig', ['woche' => $woche, 'users' => self::getBenutzerListe($eM)]);
@@ -185,7 +183,7 @@ class FrontController extends AbstractController
 
         return new Response(json_encode([
             'exit_code' => $exit_code,
-            'id' => $bestellung->getId(),
+            'id'        => $bestellung->getId(),
             ]),
             Response::HTTP_OK,
             ['content-type' => 'text/html']
@@ -202,7 +200,7 @@ class FrontController extends AbstractController
 
     public function latestWeek()
     {
-        $eM = $this->getDoctrine()->getManager();
+        $eM     = $this->getDoctrine()->getManager();
         $wochen = $eM->getRepository(Bestellung::class)->findBy([], ['woche' => 'DESC']);
 
         return $wochen[0]->getWoche();
