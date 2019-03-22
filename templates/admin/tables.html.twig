@@ -1,5 +1,9 @@
 {% extends "base.html.twig" %}
 {% block body %}
+    <table>
+        <tbody id="target"></tbody>
+    </table>
+
     <div class="row justify-content-center">
         <div class="col-11">
             <div class="card bg-black">
@@ -144,6 +148,28 @@
             </div>
         </div>
     </div>
+    <textarea id="template" style="display: none;">
+        <tr class="align-items-center" data-id="" data-changed="false">
+            <td>
+                <select class="form-control" id="tagInput" name="tag" onChange="setChanged(this)">
+                    <option value="1">Montag</option>
+                    <option value="2">Dienstag</option>
+                    <option value="3">Mittwoch</option>
+                    <option value="4">Donnerstag</option>
+                    <option value="5">Freitag</option>
+                    <option value="6">Samstag</option>
+                    <option value="7">Sonntag</option>
+                </select>
+            </td>
+            <td> <input class="form-control" type="text" name="lieferant" value="" oninput="setChanged(this)"/></td>
+            <td> <input class="form-control" type="text" name="gericht" value="" oninput="setChanged(this)"/></td>
+            <td>
+                <select class="selectpicker" name="zusagen" multiple data-selected-text-format="count>0" onChange="setChanged(this)">
+                </select>
+            </td>
+            <td class="text-center"> <button class="py-0 btn btn-primary btn-order" onClick="processOrder(this)" data-function="delete"><i class="far fa-trash-alt"></i></button></td>
+        </tr>
+    </textarea>
 {%  endblock %}
 {% block javascripts %}
     {{ parent() }}

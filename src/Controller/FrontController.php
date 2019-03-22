@@ -51,20 +51,29 @@ class FrontController extends AbstractController
         $wochen        = [];
         $entityManager = $this->getDoctrine()->getManager();
         for ($i = 0; $i < 2; ++$i) {
+            $wochen[] = self::getBestellWoche(self::latestWeek() - $i, $entityManager);
+        }
+
+        return $this->render('food/userpage.html.twig', ['bestellwochen' => $wochen]);
+        /*
+        $wochen        = [];
+        $entityManager = $this->getDoctrine()->getManager();
+        for ($i = 0; $i < 2; ++$i) {
             $wochen[] = self::getWeek(self::latestWeek() - $i, $entityManager);
         }
 
         return $this->render('food/food.html.twig', ['wochen' => $wochen]);
+        */
     }
 
     /**
-     * @Route("/print/{week}")
+     * @Route("/print/{week}/{lieferant}")
      */
-    public function print($week)
+    public function print($week, $lieferant)
     {
         $entityManager = $this->getDoctrine()->getManager();
 
-        return $this->render('print.html.twig', ['woche' => self::getWeekLieferant($week, $entityManager, 'Ziff')]);
+        return $this->render('print.html.twig', ['woche' => self::getWeekLieferant($week, $entityManager, $lieferant)]);
     }
 
     public function getWeek($week, $entityManager)

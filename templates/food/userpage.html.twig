@@ -1,0 +1,169 @@
+{% extends "base.html.twig" %}
+{% block body %}
+    {% for bestellwoche in bestellwochen %}
+        <div class="card mb-4">
+            <div class="card-header bg-black">
+                Woche {{ bestellwoche['wochenNummer'] }}
+            </div>
+            <div class="card-body bg-dark">
+                {% for lieferwoche in bestellwoche['lieferWochen'] if bestellwoche['lieferWochen'] != null %}
+                    <div class="form-row">
+                        <div class="col-3">
+                                {{ lieferwoche['lieferant'] }}
+                            </div>
+                        <div class="col-2 mb-2 ml-auto">
+                            <a href="print/{{ bestellwoche['wochenNummer'] }}/{{ lieferwoche['lieferant'] }}" class="w-100 btn btn-primary"><i class="fas fa-print"></i></a>
+                        </div>
+                    </div>
+                    <div class="lieferwoche pt-3 pb-4 border-top">
+                        <div class="lieferbestellungen">
+                            {% for lieferbestellung in lieferwoche['lieferTage'] %}
+                                <div class="bestellungsRow mb-2">
+                                    <div class="form-row">
+                                        <div class="col-2">
+                                                {{ lieferbestellung['bestellung'].tagName }}
+                                        </div>
+                                        <div class="col">
+                                            {{ lieferbestellung['bestellung'].gericht }}
+                                        </div>
+                                        <div class="col-auto">
+                                            <button data-user="{{ app.user.id }}" class="btn {{ (app.user.id in lieferbestellung['bestellung'].zusagen)? "btn-primary": "btn-outline-primary" }}" onClick="toggle({{ lieferbestellung['bestellung'].id }}, this)" data-toggle="tooltip" data-placement="top" title=" {{ lieferbestellung['zusagenListe']|join (', ') }}">
+                                                <i class="fas {{ (app.user.id in lieferbestellung['bestellung'].zusagen)? "fa-check": "fa-plus" }}"></i>
+                                            </button>
+                                            {# <select class="selectpicker w-100" name="zusagen" multiple>
+                                                {% for benutzer in users %}
+                                                    <option value="{{ benutzer.id }}" {{ (benutzer in lieferbestellung['zusagenListe'])? "selected": "" }}>{{ benutzer.vorname }}</option>
+                                                {% endfor %}
+                                            </select>  #}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        function toggle(bestellung, button)
+        {
+            let tr = $(button.closest(".form-row"));
+            console.log(tr);
+            $.ajax({
+                url: "/order",
+                type:'POST',
+                data: {
+                    "user":  button.dataset.user,
+                    "id": bestellung,
+                },
+                success: function(data) {
+                    data = JSON.parse(data);
+                    const exit_code = data['exit_code'];
+                    console.log(exit_code);
+                    const button = tr.find(".btn");
+                    const i = button.find(".fas");
+                    console.log(data['zusagen'])
+                    button.prop('title',data['zusagen'].join(", "));
+
+                    if(exit_code==="added")
+                    {
+                        button.addClass("btn-primary");
+                        button.removeClass("btn-outline-primary");
+                        i.removeClass("fa-plus");
+                        i.addClass("fa-check");
+                    }
+                    else if(exit_code==="removed")
+                    {
+                        button.removeClass("btn-primary");
+                        button.addClass("btn-outline-primary");
+                        i.addClass("fa-plus");
+                        i.removeClass("fa-check");
+                    }
+                    else
+                    {
+                        alert(exit_code);
+                    }
+                }
+            })
+        }
+
+
+
+
+/*
+        $("button[id^='toggle']").click(function(e) {
+            e.preventDefault();
+            console.log("FF");
+            var button = $(this);
+            var tr = button.closest("tr");
+            let no = {
+                "user": tr.data('user'),
+                "id": tr.data('id'),
+            };
+
+            console.log(no);
+            $.ajax({
+                url: "/order",
+                type:'POST',
+                data: {
+                    "user": tr.data('user'),
+                    "id": tr.data('id'),
+                },
+                success: function(exit_code) {
+                    console.log(exit_code);
+                    const button = tr.find(".btn");
+                    tr.attr("data-id", tr.data('id')*-1);  //funktioniert, aber ändert nicht den nächsten Knopfdruck
+
+                    button.attr("id", "le"+tr.data('id'));
+                    if(exit_code==="added")
+                    {
+                        console.log(button);
+                        button.addClass("btn-primary");
+                        button.removeClass("btn-outline-primary");
+                        let i = button.find('.fas');
+                        i.removeClass("fa-plus");
+                        i.addClass("fa-check");
+                        console.log(button);
+                    }
+                    else if(exit_code==="removed")
+                    {
+                        button.removeClass("btn-primary");
+                        button.addClass("btn-outline-primary"); //macht es weg, aber ändert es nicht
+                        console.log(button);
+                        let i = button.find('.fas');
+                        i.addClass("fa-plus");
+                        i.removeClass("fa-check");
+                    }
+                    else
+                    {
+                        alert(exit_code);
+
+                    }
+                }
+            })
+        });
+*/
+        function toggleOrder(object, user, order)
+        {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+
+                    alert (this.responseText);
+                }
+            };
+            if(object.classList.contains("active"))
+            {
+                order = -order;
+            }
+            xmlhttp.open("GET", "order/" + order + "/"+ user , true);
+            xmlhttp.send();
+
+
+        }
+    </script>
+{% endblock %}
