@@ -84,6 +84,42 @@ class FrontController extends AbstractController
         return $bestellWoche;
     }
 
+    public function getBestellWoche($woche, $eM)
+    {
+        $bestellWoche = [];
+        $bestellungen = $eM->getRepository(Bestellung::class)->findBy(['woche' => $woche]);
+        $lieferanten = [];
+        foreach($bestellungen as $bestellung)
+        {
+            $lieferanten[]=$bestellung->getLieferant();
+        }
+        $lieferanten = array_unique($lieferanten);
+        $lieferWochen = [];
+        foreach($lieferanten as $lieferant)
+        {
+            $lieferbestellungen = $eM->getRepository(Bestellung::class)->findBy(['woche' => $woche,'lieferant'=> $lieferant]);
+            dump($lieferbestellungen);
+            $lieferbestellTage = [];
+            $lieferWoche= [];
+            foreach ($lieferbestellungen as $lieferbestellung)
+            {
+                $zusagenListe = $this->getZusagenListe($lieferbestellung->getZusagen(), $eM);
+                $lieferbestellung->setTagName();
+                $lieferbestellTage[] = [
+                    'bestellung'   => $lieferbestellung,
+                    'zusagenListe' => $zusagenListe,
+                ];
+            }
+            $lieferWoche['lieferant'] = $lieferant;
+            $lieferWoche['lieferTage'] = $lieferbestellTage;
+            $lieferWochen[] = $lieferWoche;
+        }
+        //dump($lieferWochen);
+        $bestellWoche['wochenNummer'] = $woche;
+        $bestellWoche['lieferWochen'] = $lieferWochen;
+        return $bestellWoche;
+    }
+
     public function getWeekLieferant($week, $entityManager, $lieferant)
     {
         $bestellungen = $entityManager->getRepository(Bestellung::class)->findBy(['woche' => $week]);
@@ -141,10 +177,26 @@ class FrontController extends AbstractController
     public function adminW($week)
     {
         $eM    = $this->getDoctrine()->getManager();
+        //$woche = self::getWeek($week, $eM);
+        dump(self::getBestellWoche($week, $eM));
+        $tage = [];
+        $tage[] = ["tag"=>"Montag", "id"=>"1"];
+        $tage[] = ["tag"=>"Dienstag", "id"=>"2"];
+        $tage[] = ["tag"=>"Mittwoch", "id"=>"3"];
+        $tage[] = ["tag"=>"Donnerstag", "id"=>"4"];
+        $tage[] = ["tag"=>"Freitag", "id"=>"5"];
+        return $this->render("admin/admin.html.twig", ['bestellwoche' => self::getBestellWoche($week, $eM), 'users'=> self::getBenutzerListe($eM), 'tage' => $tage ]);
+        //return $this->render('admin/admin.html.twig', ['woche' => $woche, 'users' => self::getBenutzerListe($eM)]);
+    }
+    /*
+    public function adminW($week)
+    {
+        $eM    = $this->getDoctrine()->getManager();
         $woche = self::getWeek($week, $eM);
 
         return $this->render('admin/tables.html.twig', ['woche' => $woche, 'users' => self::getBenutzerListe($eM)]);
     }
+    */
 
     /**
      * @Route("/admin/user/{cmd}", name="processUser")
@@ -191,10 +243,53 @@ class FrontController extends AbstractController
     }
 
     /**
-     * @Route("/admin/{cmd}", name="processOrder")
+     * @Route("/admin/order", name="processOrder")
      */
-    public function processOrder($cmd, Request $r)
+    public function processOrder(Request $r)
     {
+
+        $exit_code = "nothing done";
+
+
+        $weekNr= $r->request->get('woche');
+        $eM        = $this->getDoctrine()->getManager();
+        $woche = $r->request->get('bestellungen');
+        $lieferant = $r->request->get('lieferant');
+        foreach ($woche as $tag)
+        {
+            parse_str($tag, $tag);
+            dump($tag);
+            if(!isset($tag['zusagen']))
+            {
+                $tag['zusagen'] = [];
+            }
+            $bestellung = $eM->getRepository(Bestellung::class)->find($tag['id']);
+            if($bestellung)
+            {
+                $bestellung->setGericht($tag['gericht']);
+                $bestellung->setZusagen(implode(",",$tag['zusagen']));
+                $exit_code="updated";
+            }
+            else
+            {
+                $bestellung = Bestellung();
+                $bestellung->setGericht($tag['gericht']);
+                $bestellung->setZusagen(implode(",",$tag['zusagen']));
+                $bestellung->setLieferant($lieferant);
+                $bestellung->setWoche($weekNr);
+                $exit_code="added";
+            }
+        }
+
+
+        return new Response(json_encode([
+            'exit_code' => $exit_code,
+            'id'        => "FK",
+        ]),
+            Response::HTTP_OK,
+            ['content-type' => 'text/html']
+        );
+
         $exit_code = 'nothing done';
 
         $bestellung = new Bestellung();

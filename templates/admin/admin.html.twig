@@ -1,0 +1,146 @@
+{% extends "base.html.twig" %}
+{% block body %}
+    <div class="card">
+        <div class="card-header bg-black">
+            Bestellungen
+        </div>
+        <div class="card-body bg-dark">
+            <div class="form-row mb-4">
+                <div class="col-auto">
+                    Woche
+                </div>
+                <div class="col-1">
+                    <input class="form-control" type="number" name="weekNr" value="{{ bestellwoche['wochenNummer'] }}">
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary"><i class="fas fa-sync-alt"></i></button>
+                </div>
+            </div>
+
+            {% for lieferwoche in bestellwoche['lieferWochen'] if bestellwoche['lieferWochen'] != null %}
+                <div class="lieferwoche pt-3 pb-4 border-top" data-nr="{{ bestellwoche['wochenNummer'] }}" data-lieferant="{{ lieferwoche['lieferant'] }}">
+                    <div class="form-row">
+                        <div class="col-3">
+                            <input type="text" name="lieferant" class="form-control" value="{{ lieferwoche['lieferant'] }}" required>
+                        </div>
+                        <div class="col-2 mb-2 ml-auto">
+                            <button onClick="submitOrders(this)" class="w-100 btn btn-primary"><i class="fas fa-cloud-upload-alt"></i></button>
+                        </div>
+                    </div>
+                    <div class="lieferbestellungen">
+                        {% for lieferbestellung in lieferwoche['lieferTage'] %}
+                            <div class="bestellungsRow mb-2">
+                                <form>
+                                    <div class="form-row">
+                                        <input type="hidden" name="id" value="{{ lieferbestellung['bestellung'].id }}">
+                                        <div class="col-2">
+                                            <select class="selectpicker w-100" name="tag">
+                                                {% for tag in tage %}
+                                                    <option value="{{ tag['id'] }}" {{ (lieferbestellung['bestellung'].tag == tag['id'])? "selected" }}>{{ tag['tag'] }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <input class="form-control" type="text" name="gericht" value="{{ lieferbestellung['bestellung'].gericht }}">
+                                        </div>
+                                        <div class="col-2">
+                                            <select class="selectpicker w-100" name="zusagen[]" multiple>
+                                                {% for benutzer in users %}
+                                                    <option value="{{ benutzer.id }}" {{ (benutzer in lieferbestellung['zusagenListe'])? "selected": "" }}>{{ benutzer.vorname }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="form-row">
+                        <div class="col-2 mb-2 ml-auto">
+                            <button class="w-100 btn btn-primary" data-toggle="tooltip" data-placement="right" title="Woche schließen"><i class="fas fa-lock-open"></i></button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+                <div class="lieferwoche pt-3 pb-4 border-top">
+                    <div class="form-row mb-2">
+                        <div class="col-3">
+                            <input type="text" name="lieferant" class="form-control" placeholder="Lieferant hinzufügen" value="" required>
+                        </div>
+                        <div class="col-auto mb-2">
+                            <button class="btn btn-primary" onClick="addWeek(this)"><i class="fas fa-plus"></i></button>
+                        </div>
+                    </div>
+                    <div class="lieferbestellungen">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <textarea id="templateBestellung" style="display:none">
+            <div class="lieferbestellungen">
+                {% for tag in tage %}
+                    <div class="bestellungsRow mb-2">
+                        <form>
+                            <div class="form-row">
+                                <div class="col-2">
+                                    <select class="selectpicker w-100" name="tag">
+                                        {% for tag2 in tage %}
+                                            <option value="{{ tag2['id'] }}" {{ (tag['id'] == tag2['id'])? "selected" }}>{{ tag2['tag'] }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <input class="form-control" type="text" name="gericht" value="">
+                                </div>
+                                <div class="col-2">
+                                    <select class="selectpicker w-100" name="zusagen" multiple>
+                                        {% for benutzer in users %}
+                                            <option value="{{ benutzer.id }}">{{ benutzer.vorname }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="form-row">
+                <div class="col-2 mb-2 ml-auto">
+                    <button class="w-100 btn btn-primary" data-toggle="tooltip" data-placement="right" title="Woche schließen"><i class="fas fa-lock-open"></i></button>
+                </div>
+            </div>
+        </div>
+    </textarea>
+
+    <textarea id="templateLieferant" style="display:none">
+        <div class="lieferwoche pt-3 pb-4 border-top">
+            <div class="form-row mb-2">
+                <div class="col-3">
+                    <input type="text" name="lieferant" class="form-control" placeholder="Lieferant hinzufügen" value="" required>
+                </div>
+                <div class="col-auto mb-2">
+                    <button class="btn btn-primary" onClick="addWeek(this)"><i class="fas fa-plus"></i></button>
+                </div>
+            </div>
+            <div class="lieferbestellungen">
+                <div class="bestellungsRow">
+                </div>
+            </div>
+        </div>
+    </textarea>
+    <textarea id="templateButton" style="display:none">
+        <div class="col-2 mb-2 ml-auto">
+            <button class="w-100 btn btn-primary" onClick="submitOrders(this)"><i class="fas fa-cloud-upload-alt"></i></button>
+        </div>
+    </textarea>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script src="/js/orderForm.js"></script>
+{% endblock %}
