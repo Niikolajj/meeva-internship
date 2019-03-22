@@ -10,10 +10,10 @@
                     Woche
                 </div>
                 <div class="col-1">
-                    <input class="form-control" type="number" name="weekNr" value="{{ bestellwoche['wochenNummer'] }}">
+                    <input class="form-control" id="weekNr" type="number" name="weekNr" value="{{ bestellwoche['wochenNummer'] }}">
                 </div>
                 <div class="col-auto">
-                    <button class="btn btn-primary"><i class="fas fa-sync-alt"></i></button>
+                    <button onClick="loadWeek(this)" class="btn btn-primary"><i class="fas fa-sync-alt"></i></button>
                 </div>
             </div>
 
@@ -119,10 +119,10 @@
     </textarea>
 
     <textarea id="templateLieferant" style="display:none">
-        <div class="lieferwoche pt-3 pb-4 border-top">
+        <div class="lieferwoche pt-3 pb-4 border-top" data-nr="{{ bestellwoche['wochenNummer'] }}" data-lieferant="">
             <div class="form-row mb-2">
                 <div class="col-3">
-                    <input type="text" name="lieferant" class="form-control" placeholder="Lieferant hinzufügen" value="" required>
+                    <input type="text" name="lieferant" class="form-control" placeholder="Lieferant hinzufügen" value="">
                 </div>
                 <div class="col-auto mb-2">
                     <button class="btn btn-primary" onClick="addWeek(this)"><i class="fas fa-plus"></i></button>

@@ -272,23 +272,27 @@ class FrontController extends AbstractController
             {
                 $tag['zusagen'] = [];
             }
-            $bestellung = $eM->getRepository(Bestellung::class)->find($tag['id']);
-            if($bestellung)
+            if(isset($tag['id']))
             {
+                $bestellung = $eM->getRepository(Bestellung::class)->find($tag['id']);
                 $bestellung->setGericht($tag['gericht']);
                 $bestellung->setZusagen(implode(",",$tag['zusagen']));
                 $exit_code="updated";
             }
             else
             {
-                $bestellung = Bestellung();
+                $bestellung = new Bestellung();
                 $bestellung->setGericht($tag['gericht']);
                 $bestellung->setZusagen(implode(",",$tag['zusagen']));
                 $bestellung->setLieferant($lieferant);
                 $bestellung->setWoche($weekNr);
+                $bestellung->setTag($tag['tag']);
+                $eM->persist($bestellung);
                 $exit_code="added";
+
             }
         }
+        $eM->flush();
 
 
         return new Response(json_encode([

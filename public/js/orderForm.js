@@ -19,9 +19,11 @@ function submitOrders(button)
     console.log($(woche).find('form'));
     $(woche).find('form').each(function(){
         bestellungen.push($(this).serialize());
-    })
-    data['woche'] = woche.dataset.nr;
-    data['lieferant'] = woche.dataset.lieferant;
+    });
+    let lieferfield = woche.getElementsByTagName("input")[0];
+    data['woche'] = document.getElementById("weekNr").value; //dataset.nr;
+    console.log(lieferfield);
+    data['lieferant'] = lieferfield.value;
     data['bestellungen'] = bestellungen;
     console.log(data);
     $.ajax({
@@ -43,4 +45,8 @@ function submitOrders(button)
             }
         }
     })
+}
+function loadWeek(button)
+{
+    window.location.href = "/admin/"+document.getElementById("weekNr").value;
 }
