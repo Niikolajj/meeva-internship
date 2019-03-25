@@ -20,7 +20,7 @@
                             {{ tag['bestellung'].gericht }}
                         </div>
                         <div class='card-body'>
-                            {% if tag['zusagenListe']|length > 0 %}
+                            {% if tag['zusagenListe']|length > 5 and tag['bestellung'].lieferant=="Ziff" or tag['zusagenListe']|length > 0 %}
                                 <ul class='namelist mb-0'>
                                     {% for name in tag['zusagenListe']|sortbyfield('vorname') %}
                                         <li class='mr-2'> {{ name }} <i class="far fa-square"></i> </li>
