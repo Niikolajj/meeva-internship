@@ -2,14 +2,14 @@
 {% block body %}
     {% for bestellwoche in bestellwochen %}
         <div class="card mb-4">
-            <div class="card-header bg-black">
-                Woche {{ bestellwoche['wochenNummer'] }}
+            <div class="card-header bg-black ">
+                <h4 class="ml-4 mb-0 align-self-center">Woche {{ bestellwoche['wochenNummer'] }}</h4>
             </div>
             <div class="card-body bg-dark">
                 {% for lieferwoche in bestellwoche['lieferWochen'] if bestellwoche['lieferWochen'] != null %}
                     <div class="form-row align-items-center">
                         <div class="col-3">
-                                {{ lieferwoche['lieferant'] }}
+                                <h5 class="ml-3">{{ lieferwoche['lieferant'] }}</h5>
                             </div>
                         <div class="col-2 mb-2 ml-auto">
                             <a href="print/{{ bestellwoche['wochenNummer'] }}/{{ lieferwoche['lieferant'] }}" class="w-100 btn btn-primary"><i class="fas fa-print"></i></a>
@@ -70,14 +70,8 @@
                     const exit_code = data['exit_code'];
                     console.log(exit_code);
                     
-                    console.log(data['zusagen'])
-                    if(data['zusagen'].length > 0){
-                        button.prop('title',data['zusagen'].join(", "));
-                    }
-                    else{
-                        button.prop('title',"Niemand will das");
-                    }
-
+                    //console.log(JSON.parse(data['zusagen']));
+                    
                     if(exit_code==="added")
                     {
                         button.addClass("btn-primary");
@@ -89,18 +83,39 @@
                             scale:[{value:1}, {value:0.85}, {value:1.4}, {value:1}],
                             duration:850,
                         })
+                        button.attr('data-original-title',"Bestellt!");
                     }
                     else if(exit_code==="removed")
                     {
                         button.removeClass("btn-primary");
                         button.addClass("btn-outline-primary");
                         i.classList="fas fa-plus";
+                        button.attr('data-original-title',"Abbestellt!");
                     }
                     else
                     {
                         i.classList="fas fa-question";
+                        button.attr('data-original-title',"Dood, I dunno");
                         alert(exit_code);
                     }
+                    button.tooltip('show');
+                    setTimeout(function(){
+                        if(data['zusagen'].length > 0){
+                            /* const list = [];
+                            for(user in data['zusagen'])
+                            {
+                                //user = JSON.parse(user);
+                                console.log(user);
+                                list.push(user['vorname']);
+                            } */
+                            button.attr('data-original-title',data['zusagen'].join(", "));
+                        }
+                        else{
+                            button.attr('data-original-title',"Niemand will das");
+                        }
+                        button.tooltip('show');
+                        //$('[data-toggle="tooltip"]').tooltip()
+                    }, 2000);
                 }
             })
         }

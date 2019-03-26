@@ -8,6 +8,9 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Serializer;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\GetSetMethodNormalizer;
 
 class FrontController extends AbstractController
 {
@@ -35,12 +38,25 @@ class FrontController extends AbstractController
         $zusagenListe = implode(',', array_filter(array_unique($zusagen)));
         $order[0]->setZusagen($zusagenListe);
         $eM->flush();
-
+        $liste = self::getZusagenListe($zusagenListe, $eM);
+        dump($liste);
+        $encListe = self::zusagenJSParse($liste);
+        dump($encListe);
         return new Response(
-            json_encode(['exit_code' => $exit_code, 'zusagen' => $this->getZusagenListe($zusagenListe, $eM)]),
+            json_encode(['exit_code' => $exit_code, 'zusagen' => $encListe]),
             Response::HTTP_OK,
             ['content-type' => 'text/html']
         );
+    }
+
+    public function zusagenJSParse($zL)
+    {
+        $zJSL = [];
+        foreach($zL as $u)
+        {
+            $zJSL[] = $u->getVorname();
+        }
+        return $zJSL;
     }
 
     /**
@@ -112,7 +128,7 @@ class FrontController extends AbstractController
             $lieferWoche= [];
             foreach ($lieferbestellungen as $lieferbestellung)
             {
-                $zusagenListe = $this->getZusagenListe($lieferbestellung->getZusagen(), $eM);
+                $zusagenListe = self::getZusagenListe($lieferbestellung->getZusagen(), $eM);
                 $lieferbestellung->setTagName();
                 $lieferbestellTage[] = [
                     'bestellung'   => $lieferbestellung,
