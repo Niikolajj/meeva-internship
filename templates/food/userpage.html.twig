@@ -7,7 +7,7 @@
             </div>
             <div class="card-body bg-dark">
                 {% for lieferwoche in bestellwoche['lieferWochen'] if bestellwoche['lieferWochen'] != null %}
-                    <div class="form-row">
+                    <div class="form-row align-items-center">
                         <div class="col-3">
                                 {{ lieferwoche['lieferant'] }}
                             </div>
@@ -19,7 +19,7 @@
                         <div class="lieferbestellungen">
                             {% for lieferbestellung in lieferwoche['lieferTage'] %}
                                 <div class="bestellungsRow mb-2">
-                                    <div class="form-row">
+                                    <div class="form-row align-items-center">
                                         <div class="col-2">
                                                 {{ lieferbestellung['bestellung'].tagName }}
                                         </div>
