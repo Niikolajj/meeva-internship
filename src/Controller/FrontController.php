@@ -252,6 +252,40 @@ class FrontController extends AbstractController
     }
 
     /**
+     * @Route("/admin/lock/{week}", name="lockW", requirements={"week"="\d+"})
+     */
+
+    public function lockWeek(Request $r, $week)
+    {
+        $lieferant = $r->request->get("lieferant");
+        $exit_code = "Nothing done";
+        $eM = $this->getDoctrine()->getManager();
+        $woche        = $eM->getRepository(Bestellung::class)->findBy(array("woche"=>$week, "lieferant"=>$lieferant));
+        $setTo;
+        foreach($woche as $bestellung)
+        {
+            if($bestellung->getStatus() < 2) //Status > 2 should be priority settings, not being toggled by normal locking
+            {
+                if(!isset($setTo)) //Preventing checkerboard pattern by assigning one lock status to all orders, yes I know that's suboptimal
+                {
+                    $setTo = ($bestellung->getStatus()==0)? 1: 0;
+                }
+                $bestellung->setStatus($setTo);
+                $exit_code = ($setTo==1)? "locked": "unlocked";
+            }
+        }
+        $eM->flush();
+        return new Response(json_encode([
+            'exit_code' => $exit_code,
+            'id'        => "FK",
+        ]),
+            Response::HTTP_OK,
+            ['content-type' => 'text/html']
+        );
+    }
+
+
+    /**
      * @Route("/admin/order", name="processOrder")
      */
     public function processOrder(Request $r)

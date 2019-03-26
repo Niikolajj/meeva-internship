@@ -17,6 +17,13 @@ class Bestellung
     private $id;
 
     /**
+     * 
+     * 
+     * @ORM\Column(type="integer")
+     */
+    private $status;
+
+    /**
      * @ORM\Column(type="integer")
      */
     private $woche;
@@ -138,6 +145,17 @@ class Bestellung
     public function setLieferant(?string $lieferant): self
     {
         $this->lieferant = $lieferant;
+
+        return $this;
+    }
+    public function getStatus(): ?int
+    {
+        return $this->status;
+    }
+
+    public function setStatus(?int $inStatus): self
+    {
+        $this->status = $inStatus;
 
         return $this;
     }

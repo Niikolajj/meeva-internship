@@ -57,7 +57,7 @@
                     </div>
                     <div class="form-row">
                         <div class="col-2 mb-2 ml-auto">
-                            <button class="w-100 btn btn-primary" data-toggle="tooltip" data-placement="right" title="Woche schließen"><i class="fas fa-lock-open"></i></button>
+                            <button onClick="lockWeek(this)"class="w-100 btn btn-primary" data-toggle="tooltip" data-placement="right" title="Woche schließen"><i class="fas fa-lock{{ (lieferwoche['lieferTage'][0]['bestellung'].status == "0")? "-open" }}"></i></button>
                         </div>
                     </div>
                 </div>
