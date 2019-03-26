@@ -51,21 +51,25 @@
     <script>
         function toggle(bestellung, button)
         {
+            
+            
             let tr = $(button.closest(".form-row"));
+            button = $(button);
+            const i = button.find(".fas")[0];
+            i.classList="fas fa-spinner fa-pulse";
             console.log(tr);
             $.ajax({
                 url: "/order",
                 type:'POST',
                 data: {
-                    "user":  button.dataset.user,
+                    "user":  button[0].dataset.user,
                     "id": bestellung,
                 },
                 success: function(data) {
                     data = JSON.parse(data);
                     const exit_code = data['exit_code'];
                     console.log(exit_code);
-                    const button = tr.find(".btn");
-                    const i = button.find(".fas");
+                    
                     console.log(data['zusagen'])
                     if(data['zusagen'].length > 0){
                         button.prop('title',data['zusagen'].join(", "));
@@ -78,18 +82,23 @@
                     {
                         button.addClass("btn-primary");
                         button.removeClass("btn-outline-primary");
-                        i.removeClass("fa-plus");
-                        i.addClass("fa-check");
+                        i.classList="fas fa-check";
+                        anime({
+                            targets:i,
+                            easing: 'easeInOutSine',
+                            scale:[{value:1}, {value:0.85}, {value:1.4}, {value:1}],
+                            duration:850,
+                        })
                     }
                     else if(exit_code==="removed")
                     {
                         button.removeClass("btn-primary");
                         button.addClass("btn-outline-primary");
-                        i.addClass("fa-plus");
-                        i.removeClass("fa-check");
+                        i.classList="fas fa-plus";
                     }
                     else
                     {
+                        i.classList="fas fa-question";
                         alert(exit_code);
                     }
                 }

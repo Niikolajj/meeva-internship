@@ -13,6 +13,8 @@ function addWeek(button)
 }
 function submitOrders(button)
 {
+    let i = button.getElementsByTagName("i")[0];
+    i.classList="fas fa-spinner fa-pulse"
     const woche = button.closest(".lieferwoche");
     let bestellungen = [];
     let data = {};
@@ -32,26 +34,54 @@ function submitOrders(button)
         data: data,
         success: function(response) {
             response = JSON.parse(response);
+            
             switch(response['exit_code'])
             {
                 case "added":
                 case "updated":
-                button.getElementsByTagName("i")[0].classList= "fas fa-check"
+                i.classList= "fas fa-check"
+                anime({
+                    targets: i,
+                    scale: [{value: 1}, {value:0.85}, {value: 1.4},{value:1}],
+                    easing: 'easeInOutSine',
+                    duration: 850,
+                    complete: function(anim){
+                        anime({
+                            targets:i,
+                            easing: 'easeInOutSine',
+                            scale:[{value:0.5, delay:200}],
+                            duration:150,
+                            complete: function(anim){
+                                i.classList= "fas fa-cloud-upload-alt";
+                                anime({
+                                    targets:i,
+                                    easing: 'easeInOutSine',
+                                    scale:[{value:1}],
+                                    duration:150,
+                                })
+                            }
+                        })
+                       
+                    }
+                  });
                 setTimeout(function(){
-                    button.getElementsByTagName("i")[0].classList= "fas fa-cloud-upload-alt"
-                }, 3500);
+                    
+                }, 1500);
                     break;
                 case "removed":
                     break;
                 default:
-                button.getElementsByTagName("i")[0].classList= "fas fa-question"
+                i.classList= "fas fa-question"
                     break;
+                
             }
         }
     })
 }
 function lockWeek(button)
 {
+    let i = button.getElementsByTagName("i")[0];
+    i.classList="fas fa-spinner fa-pulse"
     const woche = button.closest(".lieferwoche");
     //let bestellungen = [];
     let data = {};
@@ -75,17 +105,23 @@ function lockWeek(button)
             switch(response['exit_code'])
             {
                 case "locked":
-                button.getElementsByTagName("i")[0].classList= "fas fa-lock"
+                i.classList= "fas fa-lock"
                     break;
                 case "unlocked":
-                button.getElementsByTagName("i")[0].classList= "fas fa-lock-open"
+                i.classList= "fas fa-lock-open"
                     break;
                 case "updated":
                     break;
                 default:
-                button.getElementsByTagName("i")[0].classList= "fas fa-question"
+                    i.classList= "fas fa-question"
                     break;
             }
+            anime({
+                targets:i,
+                easing: 'easeInOutSine',
+                scale:[{value:1}, {value:0.85}, {value:1.4}, {value:1}],
+                duration:850,
+            })
         }
     })
 }
