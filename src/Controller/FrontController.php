@@ -231,9 +231,9 @@ class FrontController extends AbstractController
                 $eM->remove($user);
                 $exit_code = 'deleted';
             } elseif ('update' == $cmd) {
-                $user->setVorname($r->request->get('vorname'));
-                $user->setNachname($r->request->get('nachname'));
-                $user->setEmail($r->request->get('email'));
+                if($r->request->get('vorname')!="")$user->setVorname($r->request->get('vorname'));
+                if($r->request->get('nachname')!="")$user->setNachname($r->request->get('nachname'));
+                if($r->request->get('email')!="")$user->setEmail($r->request->get('email'));   //TODO catch duplicte email
                 (null == $r->request->get('roles')) ? $user->setRoles([]) : $user->setRoles($r->request->get('roles'));
                 $exit_code = 'updated';
             }
