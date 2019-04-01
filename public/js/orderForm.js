@@ -13,8 +13,8 @@ function addWeek(button)
 }
 function submitOrders(button)
 {
-    let i = button.getElementsByTagName("i")[0];
-    i.classList="fas fa-spinner fa-pulse"
+    let i = button.getElementsByTagName("i");
+    i.classList="fas fa-utensils fa-spin";
     const woche = button.closest(".lieferwoche");
     let bestellungen = [];
     let data = {};
@@ -39,7 +39,7 @@ function submitOrders(button)
             {
                 case "added":
                 case "updated":
-                i.classList= "fas fa-check"
+                i.classList= "fas fa-check";
                 anime({
                     targets: i,
                     scale: [{value: 1}, {value:0.85}, {value: 1.4},{value:1}],
@@ -58,7 +58,7 @@ function submitOrders(button)
                                     easing: 'easeInOutSine',
                                     scale:[{value:1}],
                                     duration:150,
-                                })
+                                });
                             }
                         })
                        
@@ -71,17 +71,20 @@ function submitOrders(button)
                 case "removed":
                     break;
                 default:
-                i.classList= "fas fa-question"
+                i.classList= "fas fa-question";
                     break;
                 
             }
         }
-    })
+    });
 }
 function lockWeek(button)
 {
-    let i = button.getElementsByTagName("i")[0];
-    i.classList="fas fa-spinner fa-pulse"
+    button = $(button);
+    let i = button[0].getElementsByTagName("i");
+    i.classList="fas fa-spinner fa-pulse";
+    button.attr('data-original-title',"Wird verarbeitet...");
+    button.tooltip('show');
     const woche = button.closest(".lieferwoche");
     //let bestellungen = [];
     let data = {};
@@ -89,7 +92,7 @@ function lockWeek(button)
     //$(woche).find('form').each(function(){
     //    bestellungen.push($(this).serialize());
     //});
-    let lieferfield = woche.getElementsByTagName("input")[0];
+    let lieferfield = woche[0].getElementsByTagName("input");
     //data['woche'] = document.getElementById("weekNr").value; //dataset.nr;
     let week = document.getElementById("weekNr").value;
     //console.log(lieferfield);
@@ -107,25 +110,29 @@ function lockWeek(button)
             switch(response['exit_code'])
             {
                 case "locked":
-                i.classList= "fas fa-lock"
+                    i.classList= "fas fa-lock";
+                    button.attr('data-original-title',"Woche geschlossen!");
                     break;
                 case "unlocked":
-                i.classList= "fas fa-lock-open"
+                    i.classList= "fas fa-lock-open";
+                    button.attr('data-original-title',"Woche geöffnet!");
                     break;
                 case "updated":
                     break;
                 default:
-                    i.classList= "fas fa-question"
+                    i.classList= "fas fa-question";
+                    button.attr('data-original-title',"Bestellt!");
                     break;
             }
+            button.tooltip('show');
             anime({
                 targets:i,
                 easing: 'easeInOutSine',
                 scale:[{value:1}, {value:0.85}, {value:1.4}, {value:1}],
                 duration:850,
-            })
+            });
         }
-    })
+    });
 }
 function loadWeek(button)
 {

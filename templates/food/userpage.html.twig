@@ -55,6 +55,8 @@
             
             let tr = $(button.closest(".form-row"));
             button = $(button);
+            button.attr('data-original-title',"Wird verarbeitet...");
+            button.tooltip('show');
             const i = button.find(".fas")[0];
             i.classList="fas fa-spinner fa-pulse";
             console.log(tr);
@@ -113,7 +115,7 @@
                         else{
                             button.attr('data-original-title',"Niemand will das");
                         }
-                        button.tooltip('show');
+                        button.tooltip('hide');
                         //$('[data-toggle="tooltip"]').tooltip()
                     }, 2000);
                 }
