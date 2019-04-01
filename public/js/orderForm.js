@@ -29,7 +29,7 @@ function submitOrders(button)
     data['bestellungen'] = bestellungen;
     console.log(data);
     $.ajax({
-        url: "/admin/order",
+        url: Routing.generate('processOrder'),
         type:'POST',
         data: data,
         success: function(response) {
@@ -97,7 +97,9 @@ function lockWeek(button)
     //data['bestellungen'] = bestellungen;
     //console.log(data);
     $.ajax({
-        url: "/admin/lock/"+week,
+        url: Routing.generate('lockW', {
+            'week' : week
+        }),
         type:'POST',
         data: data,
         success: function(response) {
@@ -127,5 +129,8 @@ function lockWeek(button)
 }
 function loadWeek(button)
 {
-    window.location.href = "/admin/"+document.getElementById("weekNr").value;
+    window.location.href = Routing.generate("adminW", {
+        week: document.getElementById("weekNr").value
+    });
+    //window.location.href = "/admin/"+document.getElementById("weekNr").value;
 }

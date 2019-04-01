@@ -197,7 +197,7 @@ class FrontController extends AbstractController
     }
 
     /**
-     * @Route("/admin/{week}", name="adminW", requirements={"week"="\d+"})
+     * @Route("/admin/{week}", name="adminW", requirements={"week"="\d+"}, options={"expose": true})
      */
     public function adminW($week)
     {
@@ -224,7 +224,7 @@ class FrontController extends AbstractController
     */
 
     /**
-     * @Route("/admin/user/{cmd}", name="processUser")
+     * @Route("/admin/user/{cmd}", name="processUser", options={"expose": true})
      */
     public function processUser($cmd, Request $r)
     {
@@ -268,7 +268,7 @@ class FrontController extends AbstractController
     }
 
     /**
-     * @Route("/admin/lock/{week}", name="lockW", requirements={"week"="\d+"})
+     * @Route("/admin/lock/{week}", name="lockW", requirements={"week"="\d+"}, options={"expose": true})
      */
 
     public function lockWeek(Request $r, $week)
@@ -302,7 +302,7 @@ class FrontController extends AbstractController
 
 
     /**
-     * @Route("/admin/order", name="processOrder")
+     * @Route("/admin/order", name="processOrder", options={"expose": true})
      */
     public function processOrder(Request $r)
     {
@@ -391,7 +391,7 @@ class FrontController extends AbstractController
     }
 
     /**
-     * @Route("/admin"), name="admin")
+     * @Route("/admin", name="admin")
      */
     public function admin()
     {

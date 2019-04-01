@@ -2,7 +2,7 @@
 {% block nav %}
     <div class="row justify-content-between nav">
         <div class="col-2">
-            <a href="../"> <img src="/media/logo.png"/> </a>
+            <a href="{{path("main_page")}}"> <img src="{{ asset('media/logo.png') }}"/> </a>
         </div>
         <div class="col">
             <i>- beta -</i>
@@ -26,9 +26,9 @@
                     </button>
                     <div class="dropdown-menu  text-black" aria-labelledby="dropdownMenuLink">
                         {% if app.user != null %}
-                            <a class="dropdown-item" href="/food">Bestellungen</a>
+                            <a class="dropdown-item" href="{{ path('food') }}">Bestellungen</a>
                             {% if "ROLE_ADMIN" in app.user.roles %}
-                                <a class="dropdown-item" href="/admin">Admin Center</a>
+                                <a class="dropdown-item" href="{{ path('admin') }}">Admin Center</a>
                             {% endif %}
                             <div class="text-center mt-2" id="logoutForm">
                                 <a href="{{ logout_path(key = null) }}" class="btn btn-outline-primary" name="logOut" value=" (N/A) ">Log Out</a>

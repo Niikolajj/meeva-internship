@@ -59,7 +59,7 @@
             i.classList="fas fa-spinner fa-pulse";
             console.log(tr);
             $.ajax({
-                url: "/order",
+                url: "{{ path("order") }}",
                 type:'POST',
                 data: {
                     "user":  button[0].dataset.user,
