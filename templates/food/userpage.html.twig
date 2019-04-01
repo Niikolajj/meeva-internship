@@ -2,10 +2,10 @@
 {% block body %}
     {% for bestellwoche in bestellwochen %}
         <div class="card mb-4">
-            <div class="card-header bg-black ">
-                <h4 class="ml-4 mb-0 align-self-center">Woche {{ bestellwoche['wochenNummer'] }}</h4>
+            <div class="card-header bg-black border-bottom">
+                <h4 class="ml-0 mb-0 align-self-center">Woche {{ bestellwoche['wochenNummer'] }}</h4>
             </div>
-            <div class="card-body bg-dark">
+            <div class="card-body bg-black">
                 {% for lieferwoche in bestellwoche['lieferWochen'] if bestellwoche['lieferWochen'] != null %}
                     <div class="form-row align-items-center">
                         <div class="col-3">
@@ -15,7 +15,7 @@
                             <a href="print/{{ bestellwoche['wochenNummer'] }}/{{ lieferwoche['lieferant'] }}" class="w-100 btn btn-primary"><i class="fas fa-print"></i></a>
                         </div>
                     </div>
-                    <div class="lieferwoche pt-3 pb-4 border-top">
+                    <div class="lieferwoche pt-3 pb-1 border-top">
                         <div class="lieferbestellungen">
                             {% for lieferbestellung in lieferwoche['lieferTage'] %}
                                 <div class="bestellungsRow mb-2">
@@ -27,7 +27,7 @@
                                             {{ lieferbestellung['bestellung'].gericht }}
                                         </div>
                                         <div class="col-auto">
-                                            <button data-user="{{ app.user.id }}" class="btn {{ (app.user.id in lieferbestellung['bestellung'].zusagen)? "btn-primary": "btn-outline-primary" }}" onClick="toggle({{ lieferbestellung['bestellung'].id }}, this)" data-toggle="tooltip" data-placement="top" title=" {{ (lieferbestellung['zusagenListe']|length > 0)? lieferbestellung['zusagenListe']|join (', ') : "Niemand will das." }}" {{ (lieferbestellung['bestellung'].status == "1")? "disabled"}}>
+                                            <button data-user="{{ app.user.id }}" class="btn {{ (app.user.id in lieferbestellung['bestellung'].zusagen)? "btn-primary": "btn-outline-primary" }}" onClick="toggle({{ lieferbestellung['bestellung'].id }}, this)" data-toggle="tooltip" data-placement="right" title=" {{ (lieferbestellung['zusagenListe']|length > 0)? lieferbestellung['zusagenListe']|join (', ') : "Niemand will das." }}" {{ (lieferbestellung['bestellung'].status == "1")? "disabled"}}>
                                                 <i class="fas {{ (app.user.id in lieferbestellung['bestellung'].zusagen)? "fa-check": "fa-plus" }}"></i>
                                             </button>
                                             {# <select class="selectpicker w-100" name="zusagen" multiple>
