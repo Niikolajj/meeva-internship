@@ -206,14 +206,6 @@ class FrontController extends AbstractController
         //return $this->render('admin/admin.html.twig', ['woche' => $woche, 'users' => self::getBenutzerListe($eM)]);
     }
     /*
-    public function adminW($week)
-    {
-        $eM    = $this->getDoctrine()->getManager();
-        $woche = self::getWeek($week, $eM);
-
-        return $this->render('admin/tables.html.twig', ['woche' => $woche, 'users' => self::getBenutzerListe($eM)]);
-    }
-    */
 
     /**
      * @Route("/admin/user/{cmd}", name="processUser", options={"expose": true})
@@ -329,9 +321,9 @@ class FrontController extends AbstractController
                 $bestellung->setLieferant($lieferant);
                 $bestellung->setWoche($weekNr);
                 $bestellung->setTag($tag['tag']);
+                $bestellung->setStatus("0");
                 $eM->persist($bestellung);
                 $exit_code="added";
-
             }
         }
         $eM->flush();
