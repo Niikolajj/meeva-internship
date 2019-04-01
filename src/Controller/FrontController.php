@@ -189,14 +189,6 @@ class FrontController extends AbstractController
     }
 
     /**
-     * @Route("/index", name="main_page")
-     */
-    public function page()
-    {
-        return $this->render('index.html.twig');
-    }
-
-    /**
      * @Route("/admin/{week}", name="adminW", requirements={"week"="\d+"}, options={"expose": true})
      */
     public function adminW($week)

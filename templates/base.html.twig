@@ -30,6 +30,51 @@
                 $('[data-toggle="tooltip"]').tooltip();
                 $('select').selectpicker();
             </script>
+            <script>
+        $("#loginForm").submit(function(e) {
+            e.preventDefault(); // avoid to execute the actual submit of the form.
+            
+            var form = $(this);
+            console.log(form);
+            $(form).find("input").removeClass("is-invalid");
+            const button = $(form).find("button");
+            console.log(button);
+            button.innerHTML = "BBBB ";
+            //button.HTML("<i class='fas fa-spinner fa-pulse'></i>");
+            var url = form.attr('action');
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: form.serialize(), // serializes the form's elements.
+                success: function(data)
+                {
+                    button.innerHTML = "BBBB ";
+                    data = JSON.parse(data);
+                    console.log(data);
+                    switch (data['error'])
+                    {
+                        case "success":
+                            window.location.href = "{{ path('food') }}";
+                            break;
+                        case "Kein Konto":
+                            $(form).find("#inputEmail").addClass("is-invalid");
+                            break;
+                        case "Passwort falsch":
+                            $(form).find("#inputPassword").addClass("is-invalid");
+                            break;
+                        case "Namen fehlen":
+                            alert("Bitte Vor- und Nachname bei Mattermost angeben");
+                            break;
+                        default:
+
+                            $(form).find("input").addClass("is-invalid");
+                            break;
+                    }
+                }
+            });
+        });
+    </script>
         {% endblock %}
     </body>
 </html>

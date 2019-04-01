@@ -18,6 +18,8 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Guard\Authenticator\AbstractFormLoginAuthenticator;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
+use Symfony\Component\HttpFoundation\Response;
+
 class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
 {
     use TargetPathTrait;
@@ -63,7 +65,7 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         $credentials['email'] = (strpos($credentials['email'], '@')) ? $credentials['email'] : $credentials['email'] . '@meeva.de';
         $mmResponse = self::mmCheck($credentials);
         if ('success' != $mmResponse['exit_code']) {
-            throw new CustomUserMessageAuthenticationException('Email could not be found.');
+            throw new CustomUserMessageAuthenticationException("exit_code", [$mmResponse['exit_code']]);
         } else {
             $user = $this->entityManager->getRepository(Benutzer::class)->findOneBy(['email' => $credentials['email']]);
             if (!$user) { //No user in DB, create new
@@ -98,7 +100,13 @@ class LoginFormAuthenticator extends AbstractFormLoginAuthenticator
         }
 
         // For example : return new RedirectResponse($this->urlGenerator->generate('some_route'));
-        return new RedirectResponse($this->urlGenerator->generate('food'));
+        //return new RedirectResponse($this->urlGenerator->generate('food'));
+        return new Response(json_encode([
+            'error'         => "success",
+        ]),
+            Response::HTTP_OK,
+            ['content-type' => 'text/html']
+        );
         throw new \Exception('TODO: provide a valid redirect inside ' . __FILE__);
     }
 
