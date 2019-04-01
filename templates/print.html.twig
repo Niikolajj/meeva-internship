@@ -20,15 +20,46 @@
                             {{ tag['bestellung'].gericht }}
                         </div>
                         <div class='card-body'>
-                            {% if tag['zusagenListe']|length > 5 and tag['bestellung'].lieferant=="Ziff" or tag['zusagenListe']|length > 0 %}
-                                <ul class='namelist mb-0'>
-                                    {% for name in tag['zusagenListe']|sortbyfield('vorname') %}
-                                        <li class='mr-2'> {{ name }} <i class="far fa-square"></i> </li>
-                                    {% endfor %}
-                                </ul>
+                            {% if tag['bestellung'].status==1%}
+                                {% if tag['zusagenListe']|length > 5  or tag['zusagenListe']|length > 0 and tag['bestellung'].lieferant!="Ziff"%}
+                                    <ul class='namelist mb-0'>
+                                        {% for name in tag['zusagenListe']|sortbyfield('vorname') %}
+                                            <li class='mr-2'> <i class="far fa-square"></i> {{ name }}  </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <div class="mx-auto text-center">
+                                        <img class="mx-auto" src="{{ asset('media/pepehands.png') }}"/>
+                                        {% if tag['zusagenListe']|length == 0 %}
+                                            Niemand hat bestellt
+
+                                        {% elseif tag['zusagenListe']|length == 1 %}
+                                            Nur eine Person hat bestellt
+
+                                        {% elseif tag['zusagenListe']|length > 1 %}
+                                            Nur {{tag['zusagenListe']|length}} Personen haben bestellt
+                                        {% endif %}
+                                    </div> 
+                                {% endif %}
+                            {% elseif tag['bestellung'].status>1 %}
+
                             {% else %}
-                                <img class="mx-auto" src="/media/pepehands.png"/>
+                                Derzeit haben sich angemeldet:
+                                {% if tag['zusagenListe']|length > 0 %}
+                                    
+                                    <ul class='namelist mb-0'>
+                                        {% for name in tag['zusagenListe']|sortbyfield('vorname') %}
+                                            <li class='mr-2'> {{ name }} </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <div class="mx-auto text-center">
+                                        <img class="mx-auto" src="{{ asset('media/pepehands.png') }}"/>
+                                        Niemand
+                                    </div>
+                                {% endif %}
                             {% endif %}
+                        
                         </div>
                     </div>
                 {% endfor %}
