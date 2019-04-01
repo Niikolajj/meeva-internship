@@ -39,9 +39,9 @@ class FrontController extends AbstractController
         $order[0]->setZusagen($zusagenListe);
         $eM->flush();
         $liste = self::getZusagenListe($zusagenListe, $eM);
-        dump($liste);
+        //dump($liste);
         $encListe = self::zusagenJSParse($liste);
-        dump($encListe);
+        //dump($encListe);
         return new Response(
             json_encode(['exit_code' => $exit_code, 'zusagen' => $encListe]),
             Response::HTTP_OK,
@@ -123,7 +123,7 @@ class FrontController extends AbstractController
         foreach($lieferanten as $lieferant)
         {
             $lieferbestellungen = $eM->getRepository(Bestellung::class)->findBy(['woche' => $woche,'lieferant'=> $lieferant]);
-            dump($lieferbestellungen);
+            //dump($lieferbestellungen);
             $lieferbestellTage = [];
             $lieferWoche= [];
             foreach ($lieferbestellungen as $lieferbestellung)
@@ -195,7 +195,7 @@ class FrontController extends AbstractController
     {
         $eM    = $this->getDoctrine()->getManager();
         //$woche = self::getWeek($week, $eM);
-        dump(self::getBestellWoche($week, $eM));
+        //dump(self::getBestellWoche($week, $eM));
         $tage = [];
         $tage[] = ["tag"=>"Montag", "id"=>"1"];
         $tage[] = ["tag"=>"Dienstag", "id"=>"2"];
@@ -224,7 +224,7 @@ class FrontController extends AbstractController
 
         $user = new Benutzer();
         $eM   = $this->getDoctrine()->getManager();
-        dump($r->request);
+        //dump($r->request);
         if ('add' != $cmd) {
             $user = $eM->getRepository(Benutzer::class)->find($r->request->get('user'));
             if ('delete' == $cmd) {
@@ -298,7 +298,7 @@ class FrontController extends AbstractController
      */
     public function processOrder(Request $r)
     {
-
+        dump($r);
         $exit_code = "nothing done";
 
 
@@ -309,7 +309,7 @@ class FrontController extends AbstractController
         foreach ($woche as $tag)
         {
             parse_str($tag, $tag);
-            dump($tag);
+            //dump($tag);
             if(!isset($tag['zusagen']))
             {
                 $tag['zusagen'] = [];

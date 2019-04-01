@@ -42,7 +42,7 @@
         function toggle(bestellung, button)
         {
             var tr = $(button.closest("tr"));
-            console.log(tr);
+            //console.log(tr);
             $.ajax({
                 url: "/order",
                 type:'POST',
@@ -53,10 +53,10 @@
                 success: function(data) {
                     data = JSON.parse(data);
                     const exit_code = data['exit_code'];
-                    console.log(exit_code);
+                    //console.log(exit_code);
                     const button = tr.find(".btn");
                     const i = button.find(".fas");
-                    console.log(data['zusagen'])
+                    //console.log(data['zusagen'])
                     button.prop('title',data['zusagen'].join(", "));
 
                     if(exit_code==="added")
@@ -87,7 +87,7 @@
 
         $("button[id^='toggle']").click(function(e) {
             e.preventDefault();
-            console.log("FF");
+            //console.log("FF");
             var button = $(this);
             var tr = button.closest("tr");
             let no = {
@@ -95,7 +95,7 @@
                 "id": tr.data('id'),
             };
 
-            console.log(no);
+            //console.log(no);
             $.ajax({
                 url: "/order",
                 type:'POST',
@@ -104,26 +104,26 @@
                     "id": tr.data('id'),
                 },
                 success: function(exit_code) {
-                    console.log(exit_code);
+                    //console.log(exit_code);
                     const button = tr.find(".btn");
                     tr.attr("data-id", tr.data('id')*-1);  //funktioniert, aber ändert nicht den nächsten Knopfdruck
 
                     button.attr("id", "le"+tr.data('id'));
                     if(exit_code==="added")
                     {
-                        console.log(button);
+                        //console.log(button);
                         button.addClass("btn-primary");
                         button.removeClass("btn-outline-primary");
                         let i = button.find('.fas');
                         i.removeClass("fa-plus");
                         i.addClass("fa-check");
-                        console.log(button);
+                        //console.log(button);
                     }
                     else if(exit_code==="removed")
                     {
                         button.removeClass("btn-primary");
                         button.addClass("btn-outline-primary"); //macht es weg, aber ändert es nicht
-                        console.log(button);
+                        //console.log(button);
                         let i = button.find('.fas');
                         i.addClass("fa-plus");
                         i.removeClass("fa-check");

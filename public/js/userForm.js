@@ -11,7 +11,7 @@ function userSelection(selectpicker)
         form[0].dataset.function ="delete";
         form.find("i")[0].classList="fas fa-trash-alt";
     }
-    console.log(selectpicker.value);
+    //console.log(selectpicker.value);
 }
 function userEdit(input)
 {
@@ -34,7 +34,7 @@ $('#userForm').submit(function(e) {
     e.stopPropagation();
     form = this;
     //var form = $(button).closest("form");
-    console.log(form);
+    //console.log(form);
     var cmd = form.dataset.function;
     $.ajax({
         type: "POST",
@@ -44,7 +44,7 @@ $('#userForm').submit(function(e) {
         {
             form.dataset.function ="delete";
             $(form).find("i")[0].classList="fas fa-trash-alt";
-            alert(data); // show response from the php script.
+            //alert(data); // show response from the php script.
         }
     });
 });

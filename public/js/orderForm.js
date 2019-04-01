@@ -18,16 +18,16 @@ function submitOrders(button)
     const woche = button.closest(".lieferwoche");
     let bestellungen = [];
     let data = {};
-    console.log($(woche).find('form'));
+    //console.log($(woche).find('form'));
     $(woche).find('form').each(function(){
         bestellungen.push($(this).serialize());
     });
     let lieferfield = woche.getElementsByTagName("input")[0];
     data['woche'] = document.getElementById("weekNr").value; //dataset.nr;
-    console.log(lieferfield);
+    //console.log(lieferfield);
     data['lieferant'] = lieferfield.value;
     data['bestellungen'] = bestellungen;
-    console.log(data);
+    //console.log(data);
     $.ajax({
         url: Routing.generate('processOrder'),
         type:'POST',

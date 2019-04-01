@@ -12,7 +12,7 @@ function processOrder(button)
         data[$(this).attr('name')]=$(this).val();
     });
     let order = button.dataset.function;
-    console.log(data);
+    //console.log(data);
     $.ajax({
         url: "/admin/"+order,
         type:'POST',
@@ -52,7 +52,7 @@ function setChanged(obj)
     }
     else
     {
-        console.log("");
+        //console.log("");
     }
 }
 
