@@ -92,3 +92,7 @@ composer.phar
 /.php_cs
 /.php_cs.cache
 ###< friendsofphp/php-cs-fixer ###
+
+src/Migrations/
+
+*.log
