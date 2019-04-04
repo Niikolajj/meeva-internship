@@ -7,11 +7,16 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    
 {% endblock %}
 
 {% block body %}
-    <div class="row title" style="margin-bottom:40em">
-        <h1>Ich entwickel' die L&ouml;sung f&uuml;r eure digitale Essensbestellung.*</h1>
-        <h2> <small class="text-muted">*Ich versuch's zumindest.</small> </h2>
+    
+    <div class="title col">
+        <h1 class="d-none d-lg-flex">Ich entwickel' die L&ouml;sung f&uuml;r eure digitale Essensbestellung.*</h1>
+        <h2 class="d-none d-lg-flex"> <small class="text-muted">*Ich versuch's zumindest.</small> </h2>
+        <h1 class="d-lg-none">Ich entwickel' die L&ouml;sung f&uuml;r eure digitale Essensbestellung.*</h1>
+        <h2 class="d-lg-none"> <small class="text-muted">*Ich versuch's zumindest.</small> </h2>
     </div>
+    
 {% endblock %}

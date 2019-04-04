@@ -1,68 +1,119 @@
 {# templates/meeva.base.html.twig #}
 {% block nav %}
-    <div class="row justify-content-between nav">
-        <div class="col-2">
-            <a href="{{path("main_page")}}"> <img src="{{ asset('media/logo.png') }}"/> </a>
-        </div>
-        <div class="col-2" id="navbarText">
-            <div class="input-group mb-3">
-                <div class="dropdown show">
-                    {#
-                    {% if app.user == null %}
-                        <a class="btn btn-outline-secondary" href="{{ path('app_login') }}" type="button">Log-In </a>
-                    {% else %}
-                    <a class="btn btn-outline-secondary" href="{{ path('app_login') }}" type="button"> {{ app.user.vorname }} {{  app.user.nachname }} </a>
+    <nav class="row justify-content-between navbar fixed-top navbar-expand-md navbar-light bg-light">
+        <div class="container px-0">
+            <a class="navbar-brand" href="{{path("food")}}"> <img src="{{ asset('media/logo.png') }}"/> </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse d-lg-none" id="navbarCollapse">
+                <!-- left navigation links -->
+                <ul class="navbar-nav mr-auto">
+                </ul>
+
+                <!-- right navigation link -->
+                <ul class="nav navbar-nav">
+                    <li class="nav-item d-lg-none">
+                        <a class="" href="{{ path('food') }}">Bestellungen</a>
+                    </li>
+                    {% if "ROLE_ADMIN" in app.user.roles %}
+                        <li class="nav-item d-lg-none">
+                            <a class="" href="{{ path('admin') }}">Admin Center</a>
+                        </li>
                     {% endif %}
-                    #}
-                    <button class="btn btn-outline-secondary" type="button" id="dropdownMenu3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {% if app.user != null %}
-                        {{ app.user.vorname }} {{ app.user.nachname }}
-                    {% else %}
-                        Log-in
-                    {% endif %}
-                    </button>
-                    <div class="dropdown-menu  text-black" aria-labelledby="dropdownMenuLink">
-                        {% if app.user != null %}
-                            <a class="dropdown-item" href="{{ path('food') }}">Bestellungen</a>
-                            {% if "ROLE_ADMIN" in app.user.roles %}
-                                <a class="dropdown-item" href="{{ path('admin') }}">Admin Center</a>
-                            {% endif %}
-                            <div class="text-center mt-2" id="logoutForm">
-                                <a href="{{ logout_path(key = null) }}" class="btn btn-outline-primary" name="logOut" value=" (N/A) ">Log Out</a>
+
+                    <li class="nav-item">
+                        <div class="login d-lg-none">
+                            <div class="text-black">
+                                {% if app.user != null %}
+                                {% else %}
+                                    <div class="text-center">Mattermost Log-in</div>
+                                        <form id="loginForm" class="px-4 py-3" action="{{ path('app_login') }}" method="POST">
+                                            <label for="FormEmail">Email</label>
+                                            <div class="input-group mb-3">
+                                                <input type="text" class="form-control placeholder-shown" id="inputEmail" placeholder="Name" aria-label="Username" aria-describedby="basic-addon1" name="email" required autofocus>
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" id="basic-addon2">@meeva.de</span>
+                                                </div>
+                                                <div class="invalid-feedback">
+                                                    Kein Konto mit dieser Email gefunden.
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="FormPassword">Password</label>
+                                                <input type="password" id="inputPassword" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon3" name="password" required>
+                                                <div class="invalid-feedback">
+                                                    Passwort stimmt nicht.
+                                                </div>
+                                            </div>
+                                            <input type="hidden" name="_csrf_token"
+                                                value="{{ csrf_token('authenticate') }}"
+                                            >
+                                            <button type="submit" class="btn btn-primary">Sign in</button>
+                                            {#<a href="{{ path('oauth') }}" class="btn btn-primary">MM SSO</a>#}
+                                        </form>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="http://www.meeva.de">Neu hier? Hier geht's zur Meeva Website</a>
+                                {% endif %}
                             </div>
-                        {% else %}
-                            <div class="text-center">Mattermost Log-in</div>
-                                <form id="loginForm" class="px-4 py-3" action="{{ path('app_login') }}" method="POST">
-                                    <label for="FormEmail">Email</label>
-                                    <div class="input-group mb-3">
-                                        <input type="text" class="form-control placeholder-shown" id="inputEmail" placeholder="Name" aria-label="Username" aria-describedby="basic-addon1" name="email" required autofocus>
-                                        <div class="input-group-append">
-                                            <span class="input-group-text" id="basic-addon2">@meeva.de</span>
+                        </div>
+
+
+                        <div class="dropdown show d-none d-lg-flex">
+                                    
+                            <div class="login">
+                                <a class="stretched-link  text-black" type="button" id="dropdownMenu3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    {% if app.user != null %}
+                                        {{ app.user.vorname }} {{ app.user.nachname }}
+                                    {% else %}
+                                        Log-in
+                                    {% endif %}
+                                </a>
+                                <div class="dropdown-menu text-black" aria-labelledby="dropdownMenuLink">
+                                    {% if app.user != null %}
+                                        <a class="dropdown-item" href="{{ path('food') }}">Bestellungen</a>
+                                        {% if "ROLE_ADMIN" in app.user.roles %}
+                                            <a class="dropdown-item" href="{{ path('admin') }}">Admin Center</a>
+                                        {% endif %}
+                                        <div class="text-center mt-2" id="logoutForm">
+                                            <a href="{{ logout_path(key = null) }}" class="btn btn-outline-primary" name="logOut" value=" (N/A) ">Log Out</a>
                                         </div>
-                                        <div class="invalid-feedback">
-                                            Kein Konto mit dieser Email gefunden.
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="FormPassword">Password</label>
-                                        <input type="password" id="inputPassword" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon3" name="password" required>
-                                        <div class="invalid-feedback">
-                                            Passwort stimmt nicht.
-                                        </div>
-                                    </div>
-                                    <input type="hidden" name="_csrf_token"
-                                           value="{{ csrf_token('authenticate') }}"
-                                    >
-                                    <button type="submit" class="btn btn-primary">Sign in</button>
-                                </form>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="http://www.meeva.de">Neu hier? Hier geht's zur Meeva Website</a>
-                        {% endif %}
-                    </div>
-                </div>
+                                    {% else %}
+                                        <div class="text-center">Mattermost Log-in</div>
+                                            <form id="loginForm" class="px-4 py-3" action="{{ path('app_login') }}" method="POST">
+                                                <label for="FormEmail">Email</label>
+                                                <div class="input-group mb-3">
+                                                    <input type="text" class="form-control placeholder-shown" id="inputEmail" placeholder="Name" aria-label="Username" aria-describedby="basic-addon1" name="email" required autofocus>
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text" id="basic-addon2">@meeva.de</span>
+                                                    </div>
+                                                    <div class="invalid-feedback">
+                                                        Kein Konto mit dieser Email gefunden.
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="FormPassword">Password</label>
+                                                    <input type="password" id="inputPassword" class="form-control" placeholder="Password" aria-label="Password" aria-describedby="basic-addon3" name="password" required>
+                                                    <div class="invalid-feedback">
+                                                        Passwort stimmt nicht.
+                                                    </div>
+                                                </div>
+                                                <input type="hidden" name="_csrf_token"
+                                                    value="{{ csrf_token('authenticate') }}"
+                                                >
+                                                <button type="submit" class="btn btn-primary">Sign in</button>
+                                                {#<a href="{{ path('oauth') }}" class="btn btn-primary">MM SSO</a>#}
+                                            </form>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="http://www.meeva.de">Neu hier? Hier geht's zur Meeva Website</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
             </div>
         </div>
-    </div>
-    
+    </nav>
 {% endblock %}
 

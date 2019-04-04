@@ -7,15 +7,23 @@
             <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
             <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.7/dist/css/bootstrap-select.min.css">
             <link rel="stylesheet" type="text/css" href="{{ asset("css/meeva.css") }}">
+            <style>
+                body { 
+                    padding-top: 65px; 
+                }
+            </style>
         {% endblock %}
     </head>
     <body>
-        <div class="container"> 
+        
             {% block nav %}
                 {% include "nav/nav.html.twig" %}
             {% endblock %}
-            {% block body %}{% endblock %}
-        </div>
+            <div class="container h-100 mt-5">
+                {% block body %}
+                
+                {% endblock %}
+            </div>
         {% include "selfpromo.html.twig" %}
         {% block javascripts %}
             <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/2.2.0/anime.min.js"></script>
@@ -39,7 +47,7 @@
             $(form).find("input").removeClass("is-invalid");
             const button = $(form).find("button");
             console.log(button);
-            button.innerHTML = "BBBB ";
+            //button.innerHTML = "BBBB ";
             //button.HTML("<i class='fas fa-spinner fa-pulse'></i>");
             var url = form.attr('action');
 
@@ -49,7 +57,7 @@
                 data: form.serialize(), // serializes the form's elements.
                 success: function(data)
                 {
-                    button.innerHTML = "BBBB ";
+                    //button.innerHTML = "BBBB ";
                     data = JSON.parse(data);
                     console.log(data);
                     switch (data['error'])

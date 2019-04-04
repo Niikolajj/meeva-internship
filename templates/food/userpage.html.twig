@@ -8,18 +8,19 @@
             <div class="card-body bg-black">
                 {% for lieferwoche in bestellwoche['lieferWochen'] if bestellwoche['lieferWochen'] != null %}
                     <div class="form-row align-items-center">
-                        <div class="col-3">
+                        <div class="col">
                                 <h5 class="ml-3">{{ lieferwoche['lieferant'] }}</h5>
                             </div>
-                        <div class="col-2 mb-2 ml-auto">
-                            <a href="print/{{ bestellwoche['wochenNummer'] }}/{{ lieferwoche['lieferant'] }}" class="w-100 btn btn-primary"><i class="fas fa-print"></i></a>
+                        <div class="col-auto mb-2 ml-auto">
+                            <a href="print/{{ bestellwoche['wochenNummer'] }}/{{ lieferwoche['lieferant'] }}" class=" btn btn-primary"><i class="fas fa-print"></i></a>
                         </div>
                     </div>
                     <div class="lieferwoche pt-3 pb-1 border-top">
                         <div class="lieferbestellungen">
                             {% for lieferbestellung in lieferwoche['lieferTage'] %}
                                 <div class="bestellungsRow mb-2">
-                                    <div class="form-row align-items-center">
+                                    <div class="form-row align-items-center d-none d-lg-flex  ">
+                                        
                                         <div class="col-2">
                                                 {{ lieferbestellung['bestellung'].tagName }}
                                         </div>
@@ -37,6 +38,47 @@
                                             </select>  #}
                                         </div>
                                     </div>
+                                    {% if lieferbestellung['bestellung'].status == "0" %}
+                                        <a data-user="{{ app.user.id }}" class="" onClick="toggle({{ lieferbestellung['bestellung'].id }}, this)">
+                                            <div class="d-lg-none form-row align-items-center">
+                                                
+                                                <div class="col-4 text-center">
+                                                    <span class="fa-foreground">{{ lieferbestellung['bestellung'].tagName }}</span>
+                                                    
+                                                    <div class=""><i class="text-primary fas {{ (app.user.id in lieferbestellung['bestellung'].zusagen)? "fa-check": "fa-plus" }}"></i></div>
+                                                    
+                                                </div>
+                                                <div class="col">
+                                                    {{ lieferbestellung['bestellung'].gericht }}
+                                                </div>
+                                                
+                                            </div>
+                                        </a>
+                                    {% else %}
+                                        <div class="d-lg-none form-row align-items-center">
+                    
+                                            <div class="col-4 text-center">
+                                                <span class="fa-foreground">{{ lieferbestellung['bestellung'].tagName }}</span>
+                                                <div class="">
+                                                    {% if lieferbestellung['bestellung'].status == "1" %}
+                                                        <i class="fas fa-lock fa-background"></i>
+                                                    {% elseif lieferbestellung['bestellung'].status == "1" %}
+                                                        <i class="fas fa-lock fa-background"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-question fa-background"></i>
+                                                    {% endif %}
+                                                </div>
+                    
+                                            
+                                                
+                                            </div>
+                                            <div class="col">
+                                                {{ lieferbestellung['bestellung'].gericht }}
+                                            </div>
+                                            
+                                        </div>
+                                    {% endif %}
+
                                 </div>
                             {% endfor %}
                         </div>
