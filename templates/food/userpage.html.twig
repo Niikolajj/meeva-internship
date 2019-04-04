@@ -28,7 +28,7 @@
                                             {{ lieferbestellung['bestellung'].gericht }}
                                         </div>
                                         <div class="col-auto">
-                                            <button data-user="{{ app.user.id }}" class="btn {{ (app.user.id in lieferbestellung['bestellung'].zusagen)? "btn-primary": "btn-outline-primary" }}" onClick="toggle({{ lieferbestellung['bestellung'].id }}, this)" data-toggle="tooltip" data-placement="right" title=" {{ (lieferbestellung['zusagenListe']|length > 0)? lieferbestellung['zusagenListe']|join (', ') : "Niemand will das." }}" {{ (lieferbestellung['bestellung'].status == "1")? "disabled"}}>
+                                            <button data-user="{{ app.user.id }}" class="btn {{ (app.user.id in lieferbestellung['bestellung'].zusagen)? "btn-": "btn-outline-" }}{{ (lieferbestellung['bestellung'].status == "1")? "gray": "primary"}}" onClick="toggle({{ lieferbestellung['bestellung'].id }}, this)" data-toggle="tooltip" data-placement="right" title=" {{ (lieferbestellung['zusagenListe']|length > 0)? lieferbestellung['zusagenListe']|join (', ') : "Niemand will das." }}" {{ (lieferbestellung['bestellung'].status == "1")? "disabled"}}>
                                                 <i class="fas {{ (app.user.id in lieferbestellung['bestellung'].zusagen)? "fa-check": "fa-plus" }}"></i>
                                             </button>
                                             {# <select class="selectpicker w-100" name="zusagen" multiple>
@@ -61,11 +61,11 @@
                                                 <span class="fa-foreground">{{ lieferbestellung['bestellung'].tagName }}</span>
                                                 <div class="">
                                                     {% if lieferbestellung['bestellung'].status == "1" %}
-                                                        <i class="fas fa-lock fa-background"></i>
+                                                        <i class="text-primary fas fa-lock fa-background"></i>
                                                     {% elseif lieferbestellung['bestellung'].status == "1" %}
-                                                        <i class="fas fa-lock fa-background"></i>
+                                                        <i class="text-primary fas fa-lock fa-background"></i>
                                                     {% else %}
-                                                        <i class="fas fa-question fa-background"></i>
+                                                        <i class="text-primary fas fa-question fa-background"></i>
                                                     {% endif %}
                                                 </div>
                     
